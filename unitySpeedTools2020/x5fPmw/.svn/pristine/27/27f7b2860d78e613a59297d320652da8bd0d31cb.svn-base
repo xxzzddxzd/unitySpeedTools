@@ -1,0 +1,229 @@
+//
+//  XXAboutViewController.m
+//  XXModWidgetExample
+//
+//  Created by Hubert on 14-7-10.
+//  Copyright (c) 2014年 Hubert. All rights reserved.
+//
+
+#import "x5fPavc.h"
+#import "x5fPmgd.h"
+#import "HackClass.h"
+
+extern struct callrel_ga * callrel_g;
+
+//enum compareResult{
+//    CPR_RST_NIL = 0,
+//    //以下是不需要输入框的情况
+//    CPR_RST_DEVICEID_NULL           = 10,  //未获取到设备id
+//    CPR_RST_CLI_VER_CHECK_FAILED    = 11,    //插件与游戏版本不匹配
+//    CPR_RST_SRV_GAMECFG_NOTFOUND    = 12,    //服务器未找到该游戏配置
+//    CPR_RST_SRV_CLI_ENGINE_FAILED   = 13,   //客户端与服务器引擎版本不匹配
+//    CPR_RST_DEVICE_BANNED           = 14,   //设备已禁用
+//    CPR_RST_AUTH_HAS_BEEN_UPDATE    = 15,   //由DeviceList更新了授权
+//    CPR_RST_AUTH_HAS_BEEN_ACTIVI    = 16,   //月卡已激活
+//    //以下是需要输入验证的情况
+//    CPR_RST_AUTHID_NULL = 20,  //客户端未设置authId
+//    CPR_RST_AUTHID_CHECK_FAILED,  //请求的authID未通过服务器验证
+//    //以下是匹配正常
+//    CPR_RST_AUTH_COMPLETE = 30,
+//    //以下是获取用户点数
+//    CPR_RST_GET_DEVICEPOINT_GET             = 40,
+//    CPR_RST_GET_DEVICEPOINT_ERR             = 41,
+//    CPR_RST_GET_DEVICEPOINT_INVSUCCESS      = 42,
+//    CPR_RST_GET_DEVICEPOINT_SELECT_ERR      = 43,
+//    CPR_RST_GET_DEVICEPOINT_TAR_SELECT_ERR  = 44,
+//    CPR_RST_GET_DEVICEPOINT_AC_BANNED       = 45,
+//    CPR_RST_GET_DEVICEPOINT_TAR_AC_BANNED   = 46,
+//    CPR_RST_GET_DEVICEPOINT_HASBEEN_INV     = 47,
+//    CPR_RST_GET_DEVICEPOINT_SAME_WITH_TAR   = 48,
+//};
+
+
+
+
+@interface hcavc : NSObject <UIAlertViewDelegate>
+
+@end
+@implementation hcavc
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSLog(@"%ld %ld",(long)alertView.tag, (long)buttonIndex);
+
+    UITextField *value = [alertView textFieldAtIndex:0];
+    int incinput = [value.text intValue];
+    if (incinput>1000 && incinput<100000) {
+        NSString * recv_msg;
+        if(-1!=callrel_g->FUNC_SIC(&recv_msg,incinput)){
+            NSArray * naRecv = [recv_msg componentsSeparatedByString:@";"];
+            NSString * msg;
+            if ([[naRecv objectAtIndex:0] intValue]==42) {
+                msg = [NSString stringWithFormat:@"%@",[naRecv objectAtIndex:1]];
+            }
+            else{
+                msg = [NSString stringWithFormat:@"错误%@,%@",[naRecv objectAtIndex:0],[naRecv objectAtIndex:1]];
+            }
+            callrel_g->FUNC_ALR(@"服务器信息",msg);
+        }
+    }
+}
+@end
+
+
+@interface x5fPavc ()
+{
+    NSString * rcmsg;
+    NSString * popmsg;
+    NSString * bdmsg;
+    bool isLoaded;
+    bool isInvited;
+    int dp;
+    int invc;
+    int invCount;
+}
+@end
+
+@implementation x5fPavc
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [self initView];
+//    [self checkUIFS];
+    UIScrollView *scrollView = [[[UIScrollView alloc] initWithFrame:CGRectMake((kModMainPanelWidth - 225.0f) / 2.0f, CGRectGetHeight(self.customNavBar.frame), 225.0f, kModMainPanelHeight - CGRectGetHeight(self.customNavBar.frame))] autorelease];
+    scrollView.backgroundColor = cColorMainView;
+    scrollView.showsVerticalScrollIndicator = NO;
+    [self.view addSubview:scrollView];
+    
+    bdmsg = bdmsg==nil?@"NULL":bdmsg;
+    CGFloat contentHeight =[self heightForText:bdmsg font:[UIFont systemFontOfSize:16.0f] constraintWidth:CGRectGetWidth(scrollView.frame)];
+    
+    UILabel *contentLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0, 10, CGRectGetWidth(scrollView.frame), contentHeight)] autorelease];
+    contentLabel.text = bdmsg;
+    contentLabel.backgroundColor = cColorMainView;
+    contentLabel.textColor = [UIColor whiteColor];
+    contentLabel.font = [UIFont systemFontOfSize:16.0f];
+    contentLabel.numberOfLines = 0;
+    [self.view addSubview:contentLabel];
+
+    scrollView.contentSize = CGSizeMake(CGRectGetWidth(scrollView.frame), contentHeight);
+    [scrollView addSubview:contentLabel];
+}
+
+- (void)initView
+{
+    self.view.backgroundColor = cColorMainView;
+    [self.navigationController setNavigationBarHidden:YES];
+    self.navigationController.view.layer.cornerRadius = 2;
+    self.navigationController.view.layer.borderColor = [self colorWithHexValue:0x999999 alpha:1].CGColor;
+    self.navigationController.view.layer.borderWidth = 1.0f;
+    self.navigationController.view.clipsToBounds = YES;
+    
+    self.customNavBar = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kModMainPanelWidth, 41)];
+    self.customNavBar.backgroundColor = cColorMainView;
+    [self.view addSubview:self.customNavBar];
+    
+    UILabel *title = [[UILabel alloc] initWithFrame:self.customNavBar.frame];
+    title.backgroundColor = cColorMainView;
+    title.textColor = [UIColor whiteColor];
+    title.textAlignment = NSTextAlignmentCenter;
+    title.font = [UIFont boldSystemFontOfSize:18.0f];
+    title.text = kTextNavTitleAC;
+    [self.customNavBar addSubview:title];
+    
+    UIButton *btnClose = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnClose setTitle:@"返回" forState:UIControlStateNormal];
+    [btnClose setBackgroundColor:[UIColor clearColor]];
+    btnClose.frame = CGRectMake(0, 0, 45, 41);
+    [btnClose setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
+    [btnClose setContentHorizontalAlignment:UIControlContentHorizontalAlignmentCenter];
+    [btnClose addTarget:self action:@selector(customNavigationBarLeftItemAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.customNavBar addSubview:btnClose];
+}
+
+- (bool)isFirstLoad{
+    return !isLoaded;
+}
+
+- (void)checkUIFS { //check user info from server
+    int rev = callrel_g->FUNC_GDP(&rcmsg);
+    if (rev == -1) {
+        return;
+    }
+    NSArray * naRecv = [rcmsg componentsSeparatedByString:@";"];
+    enum compareResult sign = [[naRecv objectAtIndex:0] intValue];
+    switch (sign) {
+        case CPR_RST_GET_DEVICEPOINT_GET:
+            popmsg = [naRecv objectAtIndex:1];
+            invc = [[naRecv objectAtIndex:2] intValue];
+            dp = [[naRecv objectAtIndex:3] intValue];
+            isInvited = [[naRecv objectAtIndex:4] boolValue];
+            if ([naRecv count]>5) {
+                invCount = [[naRecv objectAtIndex:5] intValue];
+            }
+            else{
+                invCount = 0;
+            }
+            
+            if (!isLoaded && !isInvited) {
+                hcavc * hca = [[hcavc alloc]init];
+                [self ainput:nil msg:popmsg cdele:hca];
+            }
+            NSString * invsta = isInvited?@"已被邀请":@"未被邀请";
+            bdmsg = [NSString stringWithFormat:@"邀请码\t:%d\n积分\t:%d\n状态\t:%@\n邀请数\t:%d",invc,dp,invsta,invCount];
+            break;
+        case CPR_RST_GET_DEVICEPOINT_ERR:
+        case CPR_RST_GET_DEVICEPOINT_AC_BANNED:
+            bdmsg = [naRecv objectAtIndex:1];
+            //                [self a:nil msg:popmsg];
+            break;
+        default:
+            break;
+    }
+    
+    isLoaded = true;
+    
+}
+
+- (void)ainput:(NSString *)title msg:(NSString *)s cdele:(hcavc *)hack
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                    message:s
+                                                   delegate:hack
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [alert show];
+}
+
+- (void)a:(NSString *)title  msg:(NSString *) s
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
+                                                    message:s
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)customNavigationBarLeftItemAction:(UIButton *)button
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+@end

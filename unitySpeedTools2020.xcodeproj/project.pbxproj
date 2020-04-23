@@ -1,0 +1,578 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B1B0C21E24519E0600F25F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B0C21D24519E0600F25F9D /* Foundation.framework */; };
+		B1B0C22924519E0600F25F9D /* unitySpeedTools2020.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C22824519E0600F25F9D /* unitySpeedTools2020.mm */; };
+		B1B0C2602451A5A700F25F9D /* x5fPmvc.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2442451A5A600F25F9D /* x5fPmvc.m */; };
+		B1B0C2612451A5A700F25F9D /* x5fPmbvc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2452451A5A600F25F9D /* x5fPmbvc.h */; };
+		B1B0C2622451A5A700F25F9D /* x5fPsvc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2462451A5A600F25F9D /* x5fPsvc.h */; };
+		B1B0C2632451A5A700F25F9D /* x5fPavc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2472451A5A600F25F9D /* x5fPavc.h */; };
+		B1B0C2642451A5A700F25F9D /* x5fPmvc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2482451A5A600F25F9D /* x5fPmvc.h */; };
+		B1B0C2652451A5A700F25F9D /* x5fPmbvc.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2492451A5A600F25F9D /* x5fPmbvc.m */; };
+		B1B0C2662451A5A700F25F9D /* x5fPsvc.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C24A2451A5A600F25F9D /* x5fPsvc.m */; };
+		B1B0C2672451A5A700F25F9D /* x5fPavc.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C24B2451A5A600F25F9D /* x5fPavc.m */; };
+		B1B0C2682451A5A700F25F9D /* x5fPmco.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C24D2451A5A600F25F9D /* x5fPmco.m */; };
+		B1B0C2692451A5A700F25F9D /* x5fPmco.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C24E2451A5A600F25F9D /* x5fPmco.h */; };
+		B1B0C26A2451A5A700F25F9D /* x5fPdb.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2502451A5A600F25F9D /* x5fPdb.h */; };
+		B1B0C26B2451A5A700F25F9D /* x5fPav.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2512451A5A600F25F9D /* x5fPav.m */; };
+		B1B0C26C2451A5A700F25F9D /* x5fPsc.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2522451A5A600F25F9D /* x5fPsc.m */; };
+		B1B0C26D2451A5A700F25F9D /* HBView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2532451A5A600F25F9D /* HBView.m */; };
+		B1B0C26E2451A5A700F25F9D /* x5fPb.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2542451A5A600F25F9D /* x5fPb.m */; };
+		B1B0C26F2451A5A700F25F9D /* x5fPl.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2552451A5A600F25F9D /* x5fPl.m */; };
+		B1B0C2702451A5A700F25F9D /* HBWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2562451A5A600F25F9D /* HBWindow.m */; };
+		B1B0C2712451A5A700F25F9D /* x5fPavm.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2572451A5A600F25F9D /* x5fPavm.h */; };
+		B1B0C2722451A5A700F25F9D /* x5fPav.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2582451A5A600F25F9D /* x5fPav.h */; };
+		B1B0C2732451A5A700F25F9D /* x5fPdb.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C2592451A5A600F25F9D /* x5fPdb.m */; };
+		B1B0C2742451A5A700F25F9D /* HBView.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C25A2451A5A600F25F9D /* HBView.h */; };
+		B1B0C2752451A5A700F25F9D /* x5fPsc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C25B2451A5A600F25F9D /* x5fPsc.h */; };
+		B1B0C2762451A5A700F25F9D /* x5fPl.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C25C2451A5A600F25F9D /* x5fPl.h */; };
+		B1B0C2772451A5A700F25F9D /* x5fPb.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C25D2451A5A600F25F9D /* x5fPb.h */; };
+		B1B0C2782451A5A700F25F9D /* x5fPavm.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C25E2451A5A600F25F9D /* x5fPavm.m */; };
+		B1B0C2792451A5A700F25F9D /* HBWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C25F2451A5A600F25F9D /* HBWindow.h */; };
+		B1B0C2822451A5DE00F25F9D /* spscapi.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C27A2451A5DD00F25F9D /* spscapi.mm */; };
+		B1B0C2832451A5DE00F25F9D /* x5fPmc.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C27B2451A5DD00F25F9D /* x5fPmc.mm */; };
+		B1B0C2842451A5DE00F25F9D /* x5fPmgd.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C27C2451A5DD00F25F9D /* x5fPmgd.h */; };
+		B1B0C2852451A5DE00F25F9D /* x5fPmc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C27D2451A5DD00F25F9D /* x5fPmc.h */; };
+		B1B0C2862451A5DE00F25F9D /* getU3dsystemfunc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C27E2451A5DD00F25F9D /* getU3dsystemfunc.h */; };
+		B1B0C2872451A5DE00F25F9D /* getU3dsystemfunc.mm in Sources */ = {isa = PBXBuildFile; fileRef = B1B0C27F2451A5DE00F25F9D /* getU3dsystemfunc.mm */; };
+		B1B0C2882451A5DE00F25F9D /* spscapi.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2802451A5DE00F25F9D /* spscapi.h */; };
+		B1B0C2892451A5DE00F25F9D /* p_inc.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B0C2812451A5DE00F25F9D /* p_inc.h */; };
+		B1B0C2902451B09700F25F9D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B0C28F2451B09700F25F9D /* UIKit.framework */; };
+		B1B0C2922451B09E00F25F9D /* libsubstrate.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B0C2912451B09E00F25F9D /* libsubstrate.dylib */; };
+		B1B0C2942451B0B400F25F9D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B0C2932451B0B400F25F9D /* QuartzCore.framework */; };
+		B1B0C2962451B0BA00F25F9D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1B0C2952451B0BA00F25F9D /* CoreGraphics.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B1B0C21A24519E0600F25F9D /* unitySpeedTools2020.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = unitySpeedTools2020.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B0C21D24519E0600F25F9D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B1B0C22224519E0600F25F9D /* control.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = control.txt; sourceTree = "<group>"; };
+		B1B0C22324519E0600F25F9D /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
+		B1B0C22524519E0600F25F9D /* PackageVersion.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = PackageVersion.plist; path = ../PackageVersion.plist; sourceTree = "<group>"; };
+		B1B0C22624519E0600F25F9D /* unitySpeedTools2020-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "unitySpeedTools2020-Prefix.pch"; path = "../unitySpeedTools2020-Prefix.pch"; sourceTree = "<group>"; };
+		B1B0C22724519E0600F25F9D /* unitySpeedTools2020.xm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = unitySpeedTools2020.xm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		B1B0C22824519E0600F25F9D /* unitySpeedTools2020.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = unitySpeedTools2020.mm; sourceTree = "<group>"; };
+		B1B0C22D24519E0600F25F9D /* unitySpeedTools2020.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = unitySpeedTools2020.plist; sourceTree = "<group>"; };
+		B1B0C2442451A5A600F25F9D /* x5fPmvc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPmvc.m; sourceTree = "<group>"; };
+		B1B0C2452451A5A600F25F9D /* x5fPmbvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPmbvc.h; sourceTree = "<group>"; };
+		B1B0C2462451A5A600F25F9D /* x5fPsvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPsvc.h; sourceTree = "<group>"; };
+		B1B0C2472451A5A600F25F9D /* x5fPavc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPavc.h; sourceTree = "<group>"; };
+		B1B0C2482451A5A600F25F9D /* x5fPmvc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPmvc.h; sourceTree = "<group>"; };
+		B1B0C2492451A5A600F25F9D /* x5fPmbvc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPmbvc.m; sourceTree = "<group>"; };
+		B1B0C24A2451A5A600F25F9D /* x5fPsvc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPsvc.m; sourceTree = "<group>"; };
+		B1B0C24B2451A5A600F25F9D /* x5fPavc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPavc.m; sourceTree = "<group>"; };
+		B1B0C24D2451A5A600F25F9D /* x5fPmco.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPmco.m; sourceTree = "<group>"; };
+		B1B0C24E2451A5A600F25F9D /* x5fPmco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPmco.h; sourceTree = "<group>"; };
+		B1B0C2502451A5A600F25F9D /* x5fPdb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPdb.h; sourceTree = "<group>"; };
+		B1B0C2512451A5A600F25F9D /* x5fPav.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPav.m; sourceTree = "<group>"; };
+		B1B0C2522451A5A600F25F9D /* x5fPsc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPsc.m; sourceTree = "<group>"; };
+		B1B0C2532451A5A600F25F9D /* HBView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBView.m; sourceTree = "<group>"; };
+		B1B0C2542451A5A600F25F9D /* x5fPb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPb.m; sourceTree = "<group>"; };
+		B1B0C2552451A5A600F25F9D /* x5fPl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPl.m; sourceTree = "<group>"; };
+		B1B0C2562451A5A600F25F9D /* HBWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBWindow.m; sourceTree = "<group>"; };
+		B1B0C2572451A5A600F25F9D /* x5fPavm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPavm.h; sourceTree = "<group>"; };
+		B1B0C2582451A5A600F25F9D /* x5fPav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPav.h; sourceTree = "<group>"; };
+		B1B0C2592451A5A600F25F9D /* x5fPdb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPdb.m; sourceTree = "<group>"; };
+		B1B0C25A2451A5A600F25F9D /* HBView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBView.h; sourceTree = "<group>"; };
+		B1B0C25B2451A5A600F25F9D /* x5fPsc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPsc.h; sourceTree = "<group>"; };
+		B1B0C25C2451A5A600F25F9D /* x5fPl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPl.h; sourceTree = "<group>"; };
+		B1B0C25D2451A5A600F25F9D /* x5fPb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x5fPb.h; sourceTree = "<group>"; };
+		B1B0C25E2451A5A600F25F9D /* x5fPavm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = x5fPavm.m; sourceTree = "<group>"; };
+		B1B0C25F2451A5A600F25F9D /* HBWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBWindow.h; sourceTree = "<group>"; };
+		B1B0C27A2451A5DD00F25F9D /* spscapi.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = spscapi.mm; path = unitySpeedTools2020/spscapi.mm; sourceTree = SOURCE_ROOT; };
+		B1B0C27B2451A5DD00F25F9D /* x5fPmc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = x5fPmc.mm; path = unitySpeedTools2020/x5fPmc.mm; sourceTree = SOURCE_ROOT; };
+		B1B0C27C2451A5DD00F25F9D /* x5fPmgd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = x5fPmgd.h; path = unitySpeedTools2020/x5fPmgd.h; sourceTree = SOURCE_ROOT; };
+		B1B0C27D2451A5DD00F25F9D /* x5fPmc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = x5fPmc.h; path = unitySpeedTools2020/x5fPmc.h; sourceTree = SOURCE_ROOT; };
+		B1B0C27E2451A5DD00F25F9D /* getU3dsystemfunc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = getU3dsystemfunc.h; path = unitySpeedTools2020/getU3dsystemfunc.h; sourceTree = SOURCE_ROOT; };
+		B1B0C27F2451A5DE00F25F9D /* getU3dsystemfunc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = getU3dsystemfunc.mm; path = unitySpeedTools2020/getU3dsystemfunc.mm; sourceTree = SOURCE_ROOT; };
+		B1B0C2802451A5DE00F25F9D /* spscapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spscapi.h; path = unitySpeedTools2020/spscapi.h; sourceTree = SOURCE_ROOT; };
+		B1B0C2812451A5DE00F25F9D /* p_inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = p_inc.h; path = unitySpeedTools2020/p_inc.h; sourceTree = SOURCE_ROOT; };
+		B1B0C28C2451AB7A00F25F9D /* unitySpeedToolsIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unitySpeedToolsIcon@2x.png"; sourceTree = "<group>"; };
+		B1B0C28D2451AB7A00F25F9D /* unitySpeedTools.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = unitySpeedTools.plist; sourceTree = "<group>"; };
+		B1B0C28E2451AB7A00F25F9D /* unitySpeedToolsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unitySpeedToolsIcon.png; sourceTree = "<group>"; };
+		B1B0C28F2451B09700F25F9D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B1B0C2912451B09E00F25F9D /* libsubstrate.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsubstrate.dylib; path = ../../../../../opt/iOSOpenDev/lib/libsubstrate.dylib; sourceTree = "<group>"; };
+		B1B0C2932451B0B400F25F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		B1B0C2952451B0BA00F25F9D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B1B0C21624519E0600F25F9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B0C2962451B0BA00F25F9D /* CoreGraphics.framework in Frameworks */,
+				B1B0C2942451B0B400F25F9D /* QuartzCore.framework in Frameworks */,
+				B1B0C2902451B09700F25F9D /* UIKit.framework in Frameworks */,
+				B1B0C21E24519E0600F25F9D /* Foundation.framework in Frameworks */,
+				B1B0C2922451B09E00F25F9D /* libsubstrate.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B1B0C20F24519E0600F25F9D = {
+			isa = PBXGroup;
+			children = (
+				B1B0C21F24519E0600F25F9D /* unitySpeedTools2020 */,
+				B1B0C21C24519E0600F25F9D /* Frameworks */,
+				B1B0C21B24519E0600F25F9D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B1B0C21B24519E0600F25F9D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C21A24519E0600F25F9D /* unitySpeedTools2020.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B1B0C21C24519E0600F25F9D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C2952451B0BA00F25F9D /* CoreGraphics.framework */,
+				B1B0C2932451B0B400F25F9D /* QuartzCore.framework */,
+				B1B0C2912451B09E00F25F9D /* libsubstrate.dylib */,
+				B1B0C28F2451B09700F25F9D /* UIKit.framework */,
+				B1B0C21D24519E0600F25F9D /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B1B0C21F24519E0600F25F9D /* unitySpeedTools2020 */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C2422451A5A600F25F9D /* x5fPmw */,
+				B1B0C22724519E0600F25F9D /* unitySpeedTools2020.xm */,
+				B1B0C22824519E0600F25F9D /* unitySpeedTools2020.mm */,
+				B1B0C27E2451A5DD00F25F9D /* getU3dsystemfunc.h */,
+				B1B0C27F2451A5DE00F25F9D /* getU3dsystemfunc.mm */,
+				B1B0C2812451A5DE00F25F9D /* p_inc.h */,
+				B1B0C2802451A5DE00F25F9D /* spscapi.h */,
+				B1B0C27A2451A5DD00F25F9D /* spscapi.mm */,
+				B1B0C27D2451A5DD00F25F9D /* x5fPmc.h */,
+				B1B0C27B2451A5DD00F25F9D /* x5fPmc.mm */,
+				B1B0C27C2451A5DD00F25F9D /* x5fPmgd.h */,
+				B1B0C22024519E0600F25F9D /* Package */,
+				B1B0C22424519E0600F25F9D /* Supporting Files */,
+			);
+			path = unitySpeedTools2020;
+			sourceTree = "<group>";
+		};
+		B1B0C22024519E0600F25F9D /* Package */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C22124519E0600F25F9D /* DEBIAN */,
+				B1B0C22A24519E0600F25F9D /* Library */,
+			);
+			path = Package;
+			sourceTree = "<group>";
+		};
+		B1B0C22124519E0600F25F9D /* DEBIAN */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C22224519E0600F25F9D /* control.txt */,
+				B1B0C22324519E0600F25F9D /* control */,
+			);
+			path = DEBIAN;
+			sourceTree = "<group>";
+		};
+		B1B0C22424519E0600F25F9D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C22524519E0600F25F9D /* PackageVersion.plist */,
+				B1B0C22624519E0600F25F9D /* unitySpeedTools2020-Prefix.pch */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B1B0C22A24519E0600F25F9D /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C28A2451AB7A00F25F9D /* PreferenceLoader */,
+				B1B0C22B24519E0600F25F9D /* MobileSubstrate */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		B1B0C22B24519E0600F25F9D /* MobileSubstrate */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C22C24519E0600F25F9D /* DynamicLibraries */,
+			);
+			path = MobileSubstrate;
+			sourceTree = "<group>";
+		};
+		B1B0C22C24519E0600F25F9D /* DynamicLibraries */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C22D24519E0600F25F9D /* unitySpeedTools2020.plist */,
+			);
+			path = DynamicLibraries;
+			sourceTree = "<group>";
+		};
+		B1B0C2422451A5A600F25F9D /* x5fPmw */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C2432451A5A600F25F9D /* Controller */,
+				B1B0C24C2451A5A600F25F9D /* Model */,
+				B1B0C24F2451A5A600F25F9D /* View */,
+			);
+			path = x5fPmw;
+			sourceTree = "<group>";
+		};
+		B1B0C2432451A5A600F25F9D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C2442451A5A600F25F9D /* x5fPmvc.m */,
+				B1B0C2452451A5A600F25F9D /* x5fPmbvc.h */,
+				B1B0C2462451A5A600F25F9D /* x5fPsvc.h */,
+				B1B0C2472451A5A600F25F9D /* x5fPavc.h */,
+				B1B0C2482451A5A600F25F9D /* x5fPmvc.h */,
+				B1B0C2492451A5A600F25F9D /* x5fPmbvc.m */,
+				B1B0C24A2451A5A600F25F9D /* x5fPsvc.m */,
+				B1B0C24B2451A5A600F25F9D /* x5fPavc.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		B1B0C24C2451A5A600F25F9D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C24D2451A5A600F25F9D /* x5fPmco.m */,
+				B1B0C24E2451A5A600F25F9D /* x5fPmco.h */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		B1B0C24F2451A5A600F25F9D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C2502451A5A600F25F9D /* x5fPdb.h */,
+				B1B0C2512451A5A600F25F9D /* x5fPav.m */,
+				B1B0C2522451A5A600F25F9D /* x5fPsc.m */,
+				B1B0C2532451A5A600F25F9D /* HBView.m */,
+				B1B0C2542451A5A600F25F9D /* x5fPb.m */,
+				B1B0C2552451A5A600F25F9D /* x5fPl.m */,
+				B1B0C2562451A5A600F25F9D /* HBWindow.m */,
+				B1B0C2572451A5A600F25F9D /* x5fPavm.h */,
+				B1B0C2582451A5A600F25F9D /* x5fPav.h */,
+				B1B0C2592451A5A600F25F9D /* x5fPdb.m */,
+				B1B0C25A2451A5A600F25F9D /* HBView.h */,
+				B1B0C25B2451A5A600F25F9D /* x5fPsc.h */,
+				B1B0C25C2451A5A600F25F9D /* x5fPl.h */,
+				B1B0C25D2451A5A600F25F9D /* x5fPb.h */,
+				B1B0C25E2451A5A600F25F9D /* x5fPavm.m */,
+				B1B0C25F2451A5A600F25F9D /* HBWindow.h */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B1B0C28A2451AB7A00F25F9D /* PreferenceLoader */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C28B2451AB7A00F25F9D /* Preferences */,
+			);
+			path = PreferenceLoader;
+			sourceTree = "<group>";
+		};
+		B1B0C28B2451AB7A00F25F9D /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				B1B0C28C2451AB7A00F25F9D /* unitySpeedToolsIcon@2x.png */,
+				B1B0C28D2451AB7A00F25F9D /* unitySpeedTools.plist */,
+				B1B0C28E2451AB7A00F25F9D /* unitySpeedToolsIcon.png */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		B1B0C21724519E0600F25F9D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B0C2722451A5A700F25F9D /* x5fPav.h in Headers */,
+				B1B0C2852451A5DE00F25F9D /* x5fPmc.h in Headers */,
+				B1B0C2642451A5A700F25F9D /* x5fPmvc.h in Headers */,
+				B1B0C2762451A5A700F25F9D /* x5fPl.h in Headers */,
+				B1B0C2692451A5A700F25F9D /* x5fPmco.h in Headers */,
+				B1B0C2862451A5DE00F25F9D /* getU3dsystemfunc.h in Headers */,
+				B1B0C2842451A5DE00F25F9D /* x5fPmgd.h in Headers */,
+				B1B0C2622451A5A700F25F9D /* x5fPsvc.h in Headers */,
+				B1B0C2792451A5A700F25F9D /* HBWindow.h in Headers */,
+				B1B0C2742451A5A700F25F9D /* HBView.h in Headers */,
+				B1B0C2772451A5A700F25F9D /* x5fPb.h in Headers */,
+				B1B0C2632451A5A700F25F9D /* x5fPavc.h in Headers */,
+				B1B0C2892451A5DE00F25F9D /* p_inc.h in Headers */,
+				B1B0C2882451A5DE00F25F9D /* spscapi.h in Headers */,
+				B1B0C2612451A5A700F25F9D /* x5fPmbvc.h in Headers */,
+				B1B0C2752451A5A700F25F9D /* x5fPsc.h in Headers */,
+				B1B0C2712451A5A700F25F9D /* x5fPavm.h in Headers */,
+				B1B0C26A2451A5A700F25F9D /* x5fPdb.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		B1B0C21924519E0600F25F9D /* unitySpeedTools2020 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B0C23024519E0600F25F9D /* Build configuration list for PBXNativeTarget "unitySpeedTools2020" */;
+			buildPhases = (
+				B1B0C21424519E0600F25F9D /* ShellScript */,
+				B1B0C21524519E0600F25F9D /* Sources */,
+				B1B0C21624519E0600F25F9D /* Frameworks */,
+				B1B0C21724519E0600F25F9D /* Headers */,
+				B1B0C21824519E0600F25F9D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = unitySpeedTools2020;
+			productName = unitySpeedTools2020;
+			productReference = B1B0C21A24519E0600F25F9D /* unitySpeedTools2020.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B1B0C21024519E0600F25F9D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1140;
+				TargetAttributes = {
+					B1B0C21924519E0600F25F9D = {
+						CreatedOnToolsVersion = 11.4.1;
+					};
+				};
+			};
+			buildConfigurationList = B1B0C21324519E0600F25F9D /* Build configuration list for PBXProject "unitySpeedTools2020" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B1B0C20F24519E0600F25F9D;
+			productRefGroup = B1B0C21B24519E0600F25F9D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B1B0C21924519E0600F25F9D /* unitySpeedTools2020 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B1B0C21424519E0600F25F9D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/opt/iOSOpenDev/bin/iosod --xcbp-logos";
+		};
+		B1B0C21824519E0600F25F9D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/opt/iOSOpenDev/bin/iosod --xcbp";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B1B0C21524519E0600F25F9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B0C2872451A5DE00F25F9D /* getU3dsystemfunc.mm in Sources */,
+				B1B0C26B2451A5A700F25F9D /* x5fPav.m in Sources */,
+				B1B0C2782451A5A700F25F9D /* x5fPavm.m in Sources */,
+				B1B0C22924519E0600F25F9D /* unitySpeedTools2020.mm in Sources */,
+				B1B0C26D2451A5A700F25F9D /* HBView.m in Sources */,
+				B1B0C2832451A5DE00F25F9D /* x5fPmc.mm in Sources */,
+				B1B0C2652451A5A700F25F9D /* x5fPmbvc.m in Sources */,
+				B1B0C2672451A5A700F25F9D /* x5fPavc.m in Sources */,
+				B1B0C26C2451A5A700F25F9D /* x5fPsc.m in Sources */,
+				B1B0C2602451A5A700F25F9D /* x5fPmvc.m in Sources */,
+				B1B0C2822451A5DE00F25F9D /* spscapi.mm in Sources */,
+				B1B0C2682451A5A700F25F9D /* x5fPmco.m in Sources */,
+				B1B0C2662451A5A700F25F9D /* x5fPsvc.m in Sources */,
+				B1B0C2732451A5A700F25F9D /* x5fPdb.m in Sources */,
+				B1B0C26F2451A5A700F25F9D /* x5fPl.m in Sources */,
+				B1B0C26E2451A5A700F25F9D /* x5fPb.m in Sources */,
+				B1B0C2702451A5A700F25F9D /* HBWindow.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B1B0C22E24519E0600F25F9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch (*) .DS_Store CVS .svn .git .hg *.xcodeproj *.xcode *.pbproj *.pbxproj";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(iOSOpenDevPath)/frameworks/**",
+					"$(SDKROOT)/System/Library/PrivateFrameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(iOSOpenDevPath)/include/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LIBRARY_SEARCH_PATHS = "$(iOSOpenDevPath)/lib/**";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = NO;
+				iOSOpenDevPath = /opt/iOSOpenDev;
+			};
+			name = Debug;
+		};
+		B1B0C22F24519E0600F25F9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch (*) .DS_Store CVS .svn .git .hg *.xcodeproj *.xcode *.pbproj *.pbxproj";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(iOSOpenDevPath)/frameworks/**",
+					"$(SDKROOT)/System/Library/PrivateFrameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "$(iOSOpenDevPath)/include/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LIBRARY_SEARCH_PATHS = "$(iOSOpenDevPath)/lib/**";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				iOSOpenDevPath = /opt/iOSOpenDev;
+			};
+			name = Release;
+		};
+		B1B0C23124519E0600F25F9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: ZhengDa Xu (7B37679NQV)";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = CAA3MX372W;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "unitySpeedTools2020/unitySpeedTools2020-Prefix.pch";
+				INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/iOSOpenDev/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 arm64e";
+				iOSOpenDevBuildPackageOnAnyBuild = NO;
+				iOSOpenDevCopyOnBuild = NO;
+				iOSOpenDevDevice = "";
+				iOSOpenDevInstallOnAnyBuild = NO;
+				iOSOpenDevInstallOnProfiling = YES;
+				iOSOpenDevRespringOnInstall = YES;
+				iOSOpenDevUsePackageVersionPList = YES;
+			};
+			name = Debug;
+		};
+		B1B0C23224519E0600F25F9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: ZhengDa Xu (7B37679NQV)";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = YES;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = CAA3MX372W;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "unitySpeedTools2020/unitySpeedTools2020-Prefix.pch";
+				INSTALL_PATH = /Library/MobileSubstrate/DynamicLibraries;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/iOSOpenDev/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 arm64e";
+				iOSOpenDevBuildPackageOnAnyBuild = NO;
+				iOSOpenDevCopyOnBuild = NO;
+				iOSOpenDevDevice = "";
+				iOSOpenDevInstallOnAnyBuild = NO;
+				iOSOpenDevInstallOnProfiling = YES;
+				iOSOpenDevRespringOnInstall = YES;
+				iOSOpenDevUsePackageVersionPList = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B1B0C21324519E0600F25F9D /* Build configuration list for PBXProject "unitySpeedTools2020" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B0C22E24519E0600F25F9D /* Debug */,
+				B1B0C22F24519E0600F25F9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1B0C23024519E0600F25F9D /* Build configuration list for PBXNativeTarget "unitySpeedTools2020" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B0C23124519E0600F25F9D /* Debug */,
+				B1B0C23224519E0600F25F9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B1B0C21024519E0600F25F9D /* Project object */;
+}
