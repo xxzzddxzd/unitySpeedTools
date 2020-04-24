@@ -132,18 +132,6 @@
 			<key>footerText</key>
 			<string>加速仅针对动画加速，若有时间等其他因加速产生了变化（如体力恢复，建筑建造）将以游戏服务器时间为准而不生效。使用时请遵循游戏运营管理相关条例，请勿使用加速于影响公平性场合。</string>
 		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>每版本更新将有数天最高级别功能试用，试用期结束后将停用功能。请按照5kbps用户中心中的说明邀请好友开通，或通过以下地址购买L1或以上级别授权。</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>秒速5KB唯一店铺   http://shop58074158.taobao.com </string>
-		</dict>
 	</array>
 	<key>entry</key>
 	<dict>

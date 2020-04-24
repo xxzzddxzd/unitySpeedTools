@@ -93,13 +93,13 @@
 		B1B0C27F2451A5DE00F25F9D /* getU3dsystemfunc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = getU3dsystemfunc.mm; path = unitySpeedTools2020/getU3dsystemfunc.mm; sourceTree = SOURCE_ROOT; };
 		B1B0C2802451A5DE00F25F9D /* spscapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spscapi.h; path = unitySpeedTools2020/spscapi.h; sourceTree = SOURCE_ROOT; };
 		B1B0C2812451A5DE00F25F9D /* p_inc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = p_inc.h; path = unitySpeedTools2020/p_inc.h; sourceTree = SOURCE_ROOT; };
-		B1B0C28C2451AB7A00F25F9D /* unitySpeedToolsIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unitySpeedToolsIcon@2x.png"; sourceTree = "<group>"; };
-		B1B0C28D2451AB7A00F25F9D /* unitySpeedTools.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = unitySpeedTools.plist; sourceTree = "<group>"; };
-		B1B0C28E2451AB7A00F25F9D /* unitySpeedToolsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unitySpeedToolsIcon.png; sourceTree = "<group>"; };
 		B1B0C28F2451B09700F25F9D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B1B0C2912451B09E00F25F9D /* libsubstrate.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsubstrate.dylib; path = ../../../../../opt/iOSOpenDev/lib/libsubstrate.dylib; sourceTree = "<group>"; };
 		B1B0C2932451B0B400F25F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B1B0C2952451B0BA00F25F9D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B1DBC55E2452931E0011AE14 /* unitySpeedTools2020Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "unitySpeedTools2020Icon@2x.png"; sourceTree = "<group>"; };
+		B1DBC55F2452931E0011AE14 /* unitySpeedTools2020.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = unitySpeedTools2020.plist; sourceTree = "<group>"; };
+		B1DBC5602452931E0011AE14 /* unitySpeedTools2020Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unitySpeedTools2020Icon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -287,9 +287,9 @@
 		B1B0C28B2451AB7A00F25F9D /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
-				B1B0C28C2451AB7A00F25F9D /* unitySpeedToolsIcon@2x.png */,
-				B1B0C28D2451AB7A00F25F9D /* unitySpeedTools.plist */,
-				B1B0C28E2451AB7A00F25F9D /* unitySpeedToolsIcon.png */,
+				B1DBC55F2452931E0011AE14 /* unitySpeedTools2020.plist */,
+				B1DBC5602452931E0011AE14 /* unitySpeedTools2020Icon.png */,
+				B1DBC55E2452931E0011AE14 /* unitySpeedTools2020Icon@2x.png */,
 			);
 			path = Preferences;
 			sourceTree = "<group>";
