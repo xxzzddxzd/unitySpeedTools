@@ -44,6 +44,7 @@ x5fPsd
 {
     NSString * path = D_PREFPATH;
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:path ];
+    XLog(@"load preference %@",[dictionary objectForKey: forKey]);
     return [dictionary objectForKey: forKey];
 }
 -(int) getParaCfg

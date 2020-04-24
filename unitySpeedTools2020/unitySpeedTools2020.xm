@@ -22,7 +22,7 @@ enum SWTYPE speedType = SW_NIL;
 enum ENGINE_STATE gb_state = SP_INIT_NIL;
 
 
-MY_BUNDLE MY_BUNDLE_S[TOTAL_VERSION] = {
+MY_BUNDLE MY_BUNDLE_S[1] = {
     {
         @"com.x5.unitySpeedTools",
         @"",
@@ -305,6 +305,7 @@ static NSString * preread(NSString * forKey)
 {
     NSString * path = D_PREFPATH;
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:path ];
+    XLog(@"load preference %@",[dictionary objectForKey: forKey]);
     return [dictionary objectForKey: forKey];
 }
 

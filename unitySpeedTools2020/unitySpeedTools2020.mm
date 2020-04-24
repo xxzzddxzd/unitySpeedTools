@@ -1,4 +1,4 @@
-#line 1 "/Users/xuzhengda/Documents/codespace/unitySpeedTools2020/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 1 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 #import "p_inc.h"
 #import <objc/objc-class.h>
 
@@ -23,7 +23,7 @@ enum SWTYPE speedType = SW_NIL;
 enum ENGINE_STATE gb_state = SP_INIT_NIL;
 
 
-MY_BUNDLE MY_BUNDLE_S[TOTAL_VERSION] = {
+MY_BUNDLE MY_BUNDLE_S[1] = {
     {
         @"com.x5.unitySpeedTools",
         @"",
@@ -306,6 +306,7 @@ static NSString * preread(NSString * forKey)
 {
     NSString * path = D_PREFPATH;
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:path ];
+    XLog(@"load preference %@",[dictionary objectForKey: forKey]);
     return [dictionary objectForKey: forKey];
 }
 
@@ -418,10 +419,10 @@ extern long ne_sys_speed_control(float a1);
 #define _LOGOS_RETURN_RETAINED
 #endif
 
-@class UnityView; @class SgeAppDelegate; @class UnityAppController; @class CTAppController; @class AppController; @class AppDelegate; @class SoulCollectorAppDelegate; 
+@class CTAppController; @class SoulCollectorAppDelegate; @class UnityAppController; @class AppController; @class SgeAppDelegate; @class UnityView; @class AppDelegate; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$AppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL AppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$AppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL AppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL SgeAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SgeAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL SoulCollectorAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SoulCollectorAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL CTAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL CTAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 399 "/Users/xuzhengda/Documents/codespace/unitySpeedTools2020/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 400 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -534,4 +535,4 @@ static BOOL _logos_method$_ungrouped$CTAppController$application$didFinishLaunch
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$AppController = objc_getClass("AppController"); MSHookMessageEx(_logos_class$_ungrouped$AppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$AppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$AppController$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$AppDelegate = objc_getClass("AppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$AppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$SgeAppDelegate = objc_getClass("SgeAppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$SgeAppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$SoulCollectorAppDelegate = objc_getClass("SoulCollectorAppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$SoulCollectorAppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$CTAppController = objc_getClass("CTAppController"); MSHookMessageEx(_logos_class$_ungrouped$CTAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$);} }
-#line 509 "/Users/xuzhengda/Documents/codespace/unitySpeedTools2020/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 510 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"

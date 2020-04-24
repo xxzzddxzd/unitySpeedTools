@@ -242,6 +242,7 @@ x5fPsuicd
 {
     NSString * path = D_PREFPATH;
     NSDictionary *dictionary = [[NSDictionary alloc] initWithContentsOfFile:path ];
+    XLog(@"load preference %@",[dictionary objectForKey: forKey]);
     return [dictionary objectForKey: forKey];
 }
 
@@ -289,15 +290,7 @@ x5fPsuicd
             vF1 = [[self preread:@"sc_f4"] floatValue];
             NSLog(@"get speed setting 2 %f",vF1);
         }
-#if mdebug
-#else
-        if (vF1>ep2) {
-            vF1=ep2;
-        }
-        if (vF1<ep1){
-            vF1=ep1;
-        }
-#endif
+
         [[NSString stringWithFormat:@"%f",vF1] drawInRect: textRect withFont: [UIFont fontWithName: @"Helvetica-Bold" size: 10] lineBreakMode: NSLineBreakByWordWrapping alignment: NSTextAlignmentCenter];
         
         [x5fP ss1:1];
