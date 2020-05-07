@@ -218,40 +218,7 @@ static enum ENGINE_STATE setU3DHook(long add1, long add2)
 #if defined(_MAC64) || defined(__LP64__)
     long timeScaleHookAddr64=0,timeManagerNewHook64=0,timeManagerHookAddr64=0;
     long u3dsystemfuncAddr64=0;
-    
-/*
-    timeManagerHookAddr64 = getTimeManager64(add1,add2);
-    if (timeManagerHookAddr64==0) {
-        timeManagerNewHook64 = getTimeManagerNew(add1,add2);
-        XLog(@"timeManagerNewHook64 %lx",timeManagerNewHook64);
-        timeScaleHookAddr64 = getTimeScale64(add1,add2);
-    }
-    else{
-        timeScaleHookAddr64 = getTimeScale64(timeManagerHookAddr64+idr,timeManagerHookAddr64+0x2000+idr);
-    }
- 
 
-    
-
-    if(timeScaleHookAddr64!=0){
-        XLog(@"####### 64 add timeScale %lx %lx",idr,timeScaleHookAddr64);
-        MSHookFunction((void *)(idr+timeScaleHookAddr64), (void *)ne_x5TimeScalex64, (void **)&x5TimeScalex64);
-        rev = SP_INIT_WAIT;
-    }
-    if(timeManagerHookAddr64!=0){
-        XLog(@"####### 64 add timeManager %lx %lx",idr,timeManagerHookAddr64);
-        MSHookFunction((void *)(idr+timeManagerHookAddr64), (void *)ne_x5TimeManagerx64, (void **)&x5TimeManagerx64);
-        rev = SP_INIT_DONE;
-    }
-    else{
-        if(timeManagerNewHook64!=0){
-            XLog(@"####### 64 add timeManagerNewHook64 %lx %lx",idr,timeManagerNewHook64);
-            MSHookFunction((void *)(idr+timeManagerNewHook64), (void *)ne_x5TimeManagerNew, (void **)&x5TimeManagerNew);
-            ne_x5TimeManagerNew();
-            rev = SP_INIT_DONE;
-        }
-    }
- */
     u3dsystemfuncAddr64 = getU3dsystemfunc(add1,add2);
     if (u3dsystemfuncAddr64){
         MSHookFunction((void *)(idr+u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);

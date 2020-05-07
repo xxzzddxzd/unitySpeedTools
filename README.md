@@ -9,9 +9,9 @@ unitySpeedTools2020是unitySpeedTools的无验证版本。
 
 # 原理
 
-1、在插件启动时，或者触屏被点按时，在代码段中搜索TimeManager和TimeScale的特征值，该特征值根据不同的Unity版本可能会发生变化。
+1、在插件启动时，或者触屏被点按时，查找Unity的System函数（根据二进制特征）
 
-2、找到这两个函数后，进行了c hook，直接利用次函数进行速度的改变。同时截断调用这个函数的流程，防止其他正常逻辑改变已经设定好的速度。
+2、使用System函数查找UnityEngine.Time::set_timeScale(System.Single)的地址，进行劫持
 
 ## 特征值
 
