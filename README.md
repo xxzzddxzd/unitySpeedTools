@@ -2,6 +2,8 @@
 
 unitySpeedTools2020是unitySpeedTools的无验证版本。
 
+English version is in wiki page
+
 
 # 功能
 
