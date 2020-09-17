@@ -380,3 +380,15 @@ long ne_sys_speed_control(float a1){
     
     return sys_speed_control(k);
 }
+void (*sys_set_targetFrameRate)(long);
+void ne_sys_set_targetFrameRate(long a1){
+    sys_set_targetFrameRate(a1);
+    XLog(@"set_targetFrameRate %ld",a1)
+//    return rev;
+}
+long (*sys_get_targetFrameRate)();
+long ne_sys_get_targetFrameRate(){
+    long rev=sys_get_targetFrameRate();
+    XLog(@"get_targetFrameRate %ld",rev)
+    return rev;
+}

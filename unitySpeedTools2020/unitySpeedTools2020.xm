@@ -35,7 +35,7 @@ MY_BUNDLE MY_BUNDLE_S[1] = {
 };
 
 
-static enum ENGINE_STATE setU3DHook(long ad1, long ad2);
+static enum ENGINE_STATE setU3DHook();
 static int getMap(void* dst, long* ad1, long *ad2);
 static void findAddrInSection(long add1, long add2);
 NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
@@ -135,10 +135,6 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
 @end
 
 static enum ENGINE_STATE execSearch(){
-    long *ad1, *ad2;
-    ad1 = (long*)malloc(sizeof(long));
-    ad2 = (long*)malloc(sizeof(long));
-    *ad2=0;
     enum ENGINE_STATE rev = SP_INIT_NIL;
 #if defined(_MAC64) || defined(__LP64__)
     cptm64 = [[NSMutableArray alloc] init];
@@ -147,121 +143,96 @@ static enum ENGINE_STATE execSearch(){
     cptm = [[NSMutableArray alloc] init];
     cpts = [[NSMutableArray alloc] init];
 #endif
-    while (getMap((void*)(*ad2),ad1,ad2) != 0) {
-        rev = setU3DHook(*ad1,*ad2);
-        if (rev == SP_INIT_WAIT || rev == SP_INIT_DONE) {
-            break;
+    rev = setU3DHook();
+    return rev;
+}
+
+/* 应对Framework形式Unity*/
+long doLoadFramework(){
+//    XLog(@"###############JBDETECT##################");
+    id a =[NSBundle mainBundle];
+    id path = [a bundlePath];
+    id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
+    id c =[NSBundle bundleWithPath:bp];
+    [c load];
+    long alsr=0;
+    
+    for (int i=0; i<_dyld_image_count(); i++) {
+        
+        if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
+            XLog(@"%d,%s",i,_dyld_get_image_name(i));
+            alsr= _dyld_get_image_vmaddr_slide(i);
         }
     }
-    return rev;
+    if (alsr==0) {
+        XLog(@"not framework mode")
+        alsr=_dyld_get_image_vmaddr_slide(0);
+    }
+    
+    XLog(@"alsr  %lx",alsr);
+    return alsr;
 }
 
-#define kerncall(x) ({ \
-kern_return_t _kr = (x); \
-if(_kr != KERN_SUCCESS) \
-fprintf(stderr, "%s failed with error code: 0x%x\n", #x, _kr); \
-_kr; \
-})
-extern "C" kern_return_t mach_vm_region
-(
- vm_map_t target_task,
- vm_address_t *address,
- vm_size_t *size,
- vm_region_flavor_t flavor,
- vm_region_info_t info,
- mach_msg_type_number_t *infoCnt,
- mach_port_t *object_name
- );
 
-static int getMap(void* dst, long* ad1, long *ad2){
-    mach_port_t task;
-    int rev = 0;
-    vm_address_t region = (vm_address_t)dst;
-    vm_size_t region_size = 0;
-#if defined(_MAC64) || defined(__LP64__)
-    vm_region_basic_info_data_64_t info;
-    mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT_64;
-    vm_region_flavor_t flavor = VM_REGION_BASIC_INFO_64;
-    if (mach_vm_region(mach_task_self(), &region, &region_size, flavor, (vm_region_info_t)&info, (mach_msg_type_number_t*)&info_count, (mach_port_t*)&task) != KERN_SUCCESS)
-    {
-        return rev;
-    }
-    else{
-        rev = 64;
-    }
-#else
-    vm_region_basic_info_data_t info;
-    mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT;
-    vm_region_flavor_t flavor = VM_REGION_BASIC_INFO;
-    if (vm_region(mach_task_self(), &region, &region_size, flavor, (vm_region_info_t)&info, (mach_msg_type_number_t*)&info_count, (mach_port_t*)&task) != KERN_SUCCESS)
-    {
-        return rev;
-    }
-    else{
-        rev = 32;
-    }
-#endif
-    *ad1 =region;
-    *ad2 =region + region_size;
-    if (info.protection<1) {
-        return 0;
-    }
-    return rev;
-}
-
-static enum ENGINE_STATE setU3DHook(long add1, long add2)
-{
-    long idr = _dyld_get_image_vmaddr_slide(0);
+static enum ENGINE_STATE setU3DHook(){
     enum ENGINE_STATE rev = SP_INIT_NIL;
-
-
 #if defined(_MAC64) || defined(__LP64__)
-    long timeScaleHookAddr64=0,timeManagerNewHook64=0,timeManagerHookAddr64=0;
     long u3dsystemfuncAddr64=0;
-
-    u3dsystemfuncAddr64 = getU3dsystemfunc(add1,add2);
+    u3dsystemfuncAddr64=dosearch();
+    XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
-        MSHookFunction((void *)(idr+u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
+        MSHookFunction((void *)(u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
         rev = SP_INIT_WAIT;
         dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(queue, ^{
-            
             sleep(3);
             long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-            XLog(@"ne_u3dsystemfunc----0x%lx",revaddr);
+            XLog(@"found set_timeScale:0x%lx",revaddr);
             if(revaddr){
                 MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-                
                 gb_state=SP_INIT_DONE;
                 XLog(@"set gb_state %d",gb_state);
             }
-            //ne_sys_speed_control(5);
-            
+#if 0
+//            revaddr = ne_u3dsystemfunc("UnityEngine.Application::set_targetFrameRate(System.Int32)");
+//            XLog(@"found set_targetFrameRate:0x%lx",revaddr);
+//            if(revaddr){
+////                MSHookFunction((void *)(revaddr), (void *)ne_sys_set_targetFrameRate, (void **)&sys_set_targetFrameRate);
+////                ne_sys_set_targetFrameRate(60);
+//            }
+//            revaddr = ne_u3dsystemfunc("UnityEngine.Application::get_targetFrameRate()");
+//            XLog(@"found get_targetFrameRate:0x%lx",revaddr);
+//            if(revaddr){
+//                MSHookFunction((void *)(revaddr), (void *)ne_sys_get_targetFrameRate, (void **)&sys_get_targetFrameRate);
+////                ne_sys_get_targetFrameRate();
+//            }
+//            //ne_sys_speed_control(5);
+#endif
         });
     }
 #else
-    long timeScaleHookAddr=0,timeManagerHookAddr=0;
-    
-    timeManagerHookAddr = getTimeManager32(add1,add2);
-    if (timeManagerHookAddr==0) {
-        timeScaleHookAddr = getTimeScale32(add1,add2);
-    }
-    else{
-        timeScaleHookAddr = getTimeScale32(timeManagerHookAddr+idr,timeManagerHookAddr+0x2000+idr);
-    }
-    
-
-    //如果有这个函数则必须要hook，防止系统控速
-    if (timeScaleHookAddr!=0){
-        XLog(@"####### 32 add timeScale %lx %lx",idr,timeScaleHookAddr);
-        MSHookFunction((void *)(idr+timeScaleHookAddr +1), (void *)ne_x5TimeScale, (void **)&x5TimeScale);
-        rev = SP_INIT_WAIT;
-    }
-    if (timeManagerHookAddr!=0){
-        XLog(@"####### 32 add timeManager %lx %lx",idr,timeManagerHookAddr);
-        MSHookFunction((void *)(idr+timeManagerHookAddr +1), (void *)ne_x5TimeManager, (void **)&x5TimeManager);
-        rev = SP_INIT_DONE;
-    }
+//    long timeScaleHookAddr=0,timeManagerHookAddr=0;
+//
+//    timeManagerHookAddr = getTimeManager32(add1,add2);
+//    if (timeManagerHookAddr==0) {
+//        timeScaleHookAddr = getTimeScale32(add1,add2);
+//    }
+//    else{
+//        timeScaleHookAddr = getTimeScale32(timeManagerHookAddr+idr,timeManagerHookAddr+0x2000+idr);
+//    }
+//
+//
+//    //如果有这个函数则必须要hook，防止系统控速
+//    if (timeScaleHookAddr!=0){
+//        XLog(@"####### 32 add timeScale %lx %lx",idr,timeScaleHookAddr);
+//        MSHookFunction((void *)(idr+timeScaleHookAddr +1), (void *)ne_x5TimeScale, (void **)&x5TimeScale);
+//        rev = SP_INIT_WAIT;
+//    }
+//    if (timeManagerHookAddr!=0){
+//        XLog(@"####### 32 add timeManager %lx %lx",idr,timeManagerHookAddr);
+//        MSHookFunction((void *)(idr+timeManagerHookAddr +1), (void *)ne_x5TimeManager, (void **)&x5TimeManager);
+//        rev = SP_INIT_DONE;
+//    }
 #endif
 
 
@@ -374,103 +345,118 @@ extern long ne_sys_speed_control(float a1);
 }
 %end
 
+
+void constructor() __attribute__((constructor));
+void constructor(void)
+{
+    
+    XLog(@"Loading UnitySpeedTools for unity engine")
+    if([preread(@"sw_f1") boolValue]){
+      speedType = SW_UNITY;
+      XLog(@"#########2");
+      execSearch();
+      XLog(@"--- init rev %d ---", gb_state);
+      [x5fPmc defaultCenter];
+    }
+}
+
 //#import "/usr/include/Availability.h"
-%hook UnityAppController
-
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-        if([preread(@"sw_f1") boolValue]){
-            speedType = SW_UNITY;
-            XLog(@"#########2");
-            execSearch();
-            XLog(@"--- init rev %d ---", gb_state);
-            [x5fPmc defaultCenter];
-        }
-    
-    return %orig;
-}
-%end
-
-
-%hook AppController
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-    
-    if([preread(@"sw_f2") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return %orig;
-    
-}
-%end
-
-%hook AppDelegate
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-    
-    
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return %orig;
-    
-}
-%end
-
-%hook SgeAppDelegate
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return %orig;
-    
-}
-%end
-
-%hook SoulCollectorAppDelegate
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return %orig;
-    
-}
-%end
-%hook CTAppController
--(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-{
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return %orig;
-    
-}
-%end
+//%hook UnityAppController
+//
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//        if([preread(@"sw_f1") boolValue]){
+//            speedType = SW_UNITY;
+//            XLog(@"#########2");
+//            execSearch();
+//            XLog(@"--- init rev %d ---", gb_state);
+//            [x5fPmc defaultCenter];
+//        }
+//
+//    return %orig;
+//}
+//%end
+//
+//
+//%hook AppController
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//
+//    if([preread(@"sw_f2") boolValue]){
+//        speedType = SW_COCO2D;
+//        XLog(@"#########2");
+//        XLog(@"--- init rev %d ---", gb_state);
+//        [x5fPmc defaultCenter];
+//        setHookSpeed();
+//        gb_state = SP_INIT_DONE;
+//    }
+//    return %orig;
+//
+//}
+//%end
+//
+//%hook AppDelegate
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//
+//
+//    if([preread(@"sw_f3") boolValue]){
+//        speedType = SW_COCO2D;
+//        XLog(@"#########2");
+//        XLog(@"--- init rev %d ---", gb_state);
+//        [x5fPmc defaultCenter];
+//        setHookSpeed();
+//        gb_state = SP_INIT_DONE;
+//    }
+//    return %orig;
+//
+//}
+//%end
+//
+//%hook SgeAppDelegate
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//    if([preread(@"sw_f3") boolValue]){
+//        speedType = SW_COCO2D;
+//        XLog(@"#########2");
+//        XLog(@"--- init rev %d ---", gb_state);
+//        [x5fPmc defaultCenter];
+//        setHookSpeed();
+//        gb_state = SP_INIT_DONE;
+//    }
+//    return %orig;
+//
+//}
+//%end
+//
+//%hook SoulCollectorAppDelegate
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//
+//    if([preread(@"sw_f3") boolValue]){
+//        speedType = SW_COCO2D;
+//        XLog(@"#########2");
+//        XLog(@"--- init rev %d ---", gb_state);
+//        [x5fPmc defaultCenter];
+//        setHookSpeed();
+//        gb_state = SP_INIT_DONE;
+//    }
+//    return %orig;
+//
+//}
+//%end
+//%hook CTAppController
+//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+//{
+//    if([preread(@"sw_f3") boolValue]){
+//        speedType = SW_COCO2D;
+//        XLog(@"#########2");
+//        XLog(@"--- init rev %d ---", gb_state);
+//        [x5fPmc defaultCenter];
+//        setHookSpeed();
+//        gb_state = SP_INIT_DONE;
+//    }
+//    return %orig;
+//
+//}
+//%end

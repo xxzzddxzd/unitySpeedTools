@@ -36,7 +36,7 @@ MY_BUNDLE MY_BUNDLE_S[1] = {
 };
 
 
-static enum ENGINE_STATE setU3DHook(long ad1, long ad2);
+static enum ENGINE_STATE setU3DHook();
 static int getMap(void* dst, long* ad1, long *ad2);
 static void findAddrInSection(long add1, long add2);
 NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
@@ -136,10 +136,6 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
 @end
 
 static enum ENGINE_STATE execSearch(){
-    long *ad1, *ad2;
-    ad1 = (long*)malloc(sizeof(long));
-    ad2 = (long*)malloc(sizeof(long));
-    *ad2=0;
     enum ENGINE_STATE rev = SP_INIT_NIL;
 #if defined(_MAC64) || defined(__LP64__)
     cptm64 = [[NSMutableArray alloc] init];
@@ -148,121 +144,96 @@ static enum ENGINE_STATE execSearch(){
     cptm = [[NSMutableArray alloc] init];
     cpts = [[NSMutableArray alloc] init];
 #endif
-    while (getMap((void*)(*ad2),ad1,ad2) != 0) {
-        rev = setU3DHook(*ad1,*ad2);
-        if (rev == SP_INIT_WAIT || rev == SP_INIT_DONE) {
-            break;
+    rev = setU3DHook();
+    return rev;
+}
+
+
+long doLoadFramework(){
+
+    id a =[NSBundle mainBundle];
+    id path = [a bundlePath];
+    id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
+    id c =[NSBundle bundleWithPath:bp];
+    [c load];
+    long alsr=0;
+    
+    for (int i=0; i<_dyld_image_count(); i++) {
+        
+        if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
+            XLog(@"%d,%s",i,_dyld_get_image_name(i));
+            alsr= _dyld_get_image_vmaddr_slide(i);
         }
     }
-    return rev;
+    if (alsr==0) {
+        XLog(@"not framework mode")
+        alsr=_dyld_get_image_vmaddr_slide(0);
+    }
+    
+    XLog(@"alsr  %lx",alsr);
+    return alsr;
 }
 
-#define kerncall(x) ({ \
-kern_return_t _kr = (x); \
-if(_kr != KERN_SUCCESS) \
-fprintf(stderr, "%s failed with error code: 0x%x\n", #x, _kr); \
-_kr; \
-})
-extern "C" kern_return_t mach_vm_region
-(
- vm_map_t target_task,
- vm_address_t *address,
- vm_size_t *size,
- vm_region_flavor_t flavor,
- vm_region_info_t info,
- mach_msg_type_number_t *infoCnt,
- mach_port_t *object_name
- );
 
-static int getMap(void* dst, long* ad1, long *ad2){
-    mach_port_t task;
-    int rev = 0;
-    vm_address_t region = (vm_address_t)dst;
-    vm_size_t region_size = 0;
-#if defined(_MAC64) || defined(__LP64__)
-    vm_region_basic_info_data_64_t info;
-    mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT_64;
-    vm_region_flavor_t flavor = VM_REGION_BASIC_INFO_64;
-    if (mach_vm_region(mach_task_self(), &region, &region_size, flavor, (vm_region_info_t)&info, (mach_msg_type_number_t*)&info_count, (mach_port_t*)&task) != KERN_SUCCESS)
-    {
-        return rev;
-    }
-    else{
-        rev = 64;
-    }
-#else
-    vm_region_basic_info_data_t info;
-    mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT;
-    vm_region_flavor_t flavor = VM_REGION_BASIC_INFO;
-    if (vm_region(mach_task_self(), &region, &region_size, flavor, (vm_region_info_t)&info, (mach_msg_type_number_t*)&info_count, (mach_port_t*)&task) != KERN_SUCCESS)
-    {
-        return rev;
-    }
-    else{
-        rev = 32;
-    }
-#endif
-    *ad1 =region;
-    *ad2 =region + region_size;
-    if (info.protection<1) {
-        return 0;
-    }
-    return rev;
-}
-
-static enum ENGINE_STATE setU3DHook(long add1, long add2)
-{
-    long idr = _dyld_get_image_vmaddr_slide(0);
+static enum ENGINE_STATE setU3DHook(){
     enum ENGINE_STATE rev = SP_INIT_NIL;
-
-
 #if defined(_MAC64) || defined(__LP64__)
-    long timeScaleHookAddr64=0,timeManagerNewHook64=0,timeManagerHookAddr64=0;
     long u3dsystemfuncAddr64=0;
-
-    u3dsystemfuncAddr64 = getU3dsystemfunc(add1,add2);
+    u3dsystemfuncAddr64=dosearch();
+    XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
-        MSHookFunction((void *)(idr+u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
+        MSHookFunction((void *)(u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
         rev = SP_INIT_WAIT;
         dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(queue, ^{
-            
             sleep(3);
             long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-            XLog(@"ne_u3dsystemfunc----0x%lx",revaddr);
+            XLog(@"found set_timeScale:0x%lx",revaddr);
             if(revaddr){
                 MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-                
                 gb_state=SP_INIT_DONE;
                 XLog(@"set gb_state %d",gb_state);
             }
-            
-            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         });
     }
 #else
-    long timeScaleHookAddr=0,timeManagerHookAddr=0;
-    
-    timeManagerHookAddr = getTimeManager32(add1,add2);
-    if (timeManagerHookAddr==0) {
-        timeScaleHookAddr = getTimeScale32(add1,add2);
-    }
-    else{
-        timeScaleHookAddr = getTimeScale32(timeManagerHookAddr+idr,timeManagerHookAddr+0x2000+idr);
-    }
-    
 
-    
-    if (timeScaleHookAddr!=0){
-        XLog(@"####### 32 add timeScale %lx %lx",idr,timeScaleHookAddr);
-        MSHookFunction((void *)(idr+timeScaleHookAddr +1), (void *)ne_x5TimeScale, (void **)&x5TimeScale);
-        rev = SP_INIT_WAIT;
-    }
-    if (timeManagerHookAddr!=0){
-        XLog(@"####### 32 add timeManager %lx %lx",idr,timeManagerHookAddr);
-        MSHookFunction((void *)(idr+timeManagerHookAddr +1), (void *)ne_x5TimeManager, (void **)&x5TimeManager);
-        rev = SP_INIT_DONE;
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 
 
@@ -386,10 +357,10 @@ extern long ne_sys_speed_control(float a1);
 #define _LOGOS_RETURN_RETAINED
 #endif
 
-@class AppDelegate; @class CTAppController; @class UnityAppController; @class SoulCollectorAppDelegate; @class SgeAppDelegate; @class UnityView; @class AppController; 
-static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$AppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL AppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$AppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL AppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL SgeAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SgeAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL SoulCollectorAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SoulCollectorAppDelegate* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL CTAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL CTAppController* _LOGOS_SELF_CONST, SEL, id, id); 
+@class UnityView; 
+static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 367 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 338 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -401,105 +372,120 @@ static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SE
 
 
 
-
-
-
-static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-        if([preread(@"sw_f1") boolValue]){
-            speedType = SW_UNITY;
-            XLog(@"#########2");
-            execSearch();
-            XLog(@"--- init rev %d ---", gb_state);
-            [x5fPmc defaultCenter];
-        }
+void constructor() __attribute__((constructor));
+void constructor(void)
+{
     
-    return _logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-}
-
-
-
-
-
-static BOOL _logos_method$_ungrouped$AppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppController* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-    
-    if([preread(@"sw_f2") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
+    XLog(@"Loading UnitySpeedTools for unity engine")
+    if([preread(@"sw_f1") boolValue]){
+      speedType = SW_UNITY;
+      XLog(@"#########2");
+      execSearch();
+      XLog(@"--- init rev %d ---", gb_state);
+      [x5fPmc defaultCenter];
     }
-    return _logos_orig$_ungrouped$AppController$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-    
 }
 
 
 
 
-static BOOL _logos_method$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL AppDelegate* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-    
-    
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return _logos_orig$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-    
-}
 
 
 
 
-static BOOL _logos_method$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SgeAppDelegate* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return _logos_orig$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-    
-}
 
 
 
 
-static BOOL _logos_method$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL SoulCollectorAppDelegate* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return _logos_orig$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-    
-}
 
 
 
-static BOOL _logos_method$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL CTAppController* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
-    if([preread(@"sw_f3") boolValue]){
-        speedType = SW_COCO2D;
-        XLog(@"#########2");
-        XLog(@"--- init rev %d ---", gb_state);
-        [x5fPmc defaultCenter];
-        setHookSpeed();
-        gb_state = SP_INIT_DONE;
-    }
-    return _logos_orig$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
-    
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 static __attribute__((constructor)) void _logosLocalInit() {
-{Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$AppController = objc_getClass("AppController"); MSHookMessageEx(_logos_class$_ungrouped$AppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$AppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$AppController$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$AppDelegate = objc_getClass("AppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$AppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$AppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$SgeAppDelegate = objc_getClass("SgeAppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$SgeAppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$SgeAppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$SoulCollectorAppDelegate = objc_getClass("SoulCollectorAppDelegate"); MSHookMessageEx(_logos_class$_ungrouped$SoulCollectorAppDelegate, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$SoulCollectorAppDelegate$application$didFinishLaunchingWithOptions$);Class _logos_class$_ungrouped$CTAppController = objc_getClass("CTAppController"); MSHookMessageEx(_logos_class$_ungrouped$CTAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$CTAppController$application$didFinishLaunchingWithOptions$);} }
-#line 477 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+{Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);} }
+#line 463 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
