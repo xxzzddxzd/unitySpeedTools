@@ -53,15 +53,17 @@ x5fPsuicd
     self.customView.backgroundColor = [UIColor clearColor];
     self.customView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    [self.view addSubview:self.customView];
+//    [self.view addSubview:self.customView];
+    id<UIApplicationDelegate> app = [[UIApplication sharedApplication] delegate];
+    [app.window addSubview:self.customView];
     
     self.panelView = [[UIView alloc] initWithFrame:bounds];
     self.panelView.backgroundColor = [UIColor clearColor];
     self.panelView.hidden = YES;
     self.panelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-    [self.view addSubview:self.panelView];
-
+//    [self.view addSubview:self.panelView];
+    [app.window addSubview:self.panelView];
     [self.panelView addSubview:self.settingsVC.navigationController.view];
 
     UITapGestureRecognizer *backgroundTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanelViewBackgroundTapEvent:)];

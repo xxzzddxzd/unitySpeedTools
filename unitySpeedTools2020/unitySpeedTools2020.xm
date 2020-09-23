@@ -339,6 +339,7 @@ extern long ne_sys_speed_control(float a1);
 - (void)touchesBegan:(id)touches withEvent:(id)event{
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
     if(gb_state==2 && sys_speed_control){
+        XLog(@"show x5 icon")
         [x5fPmc showIcon];
     }
     %orig;
@@ -356,26 +357,26 @@ void constructor(void)
       XLog(@"#########2");
       execSearch();
       XLog(@"--- init rev %d ---", gb_state);
-      [x5fPmc defaultCenter];
+//      [x5fPmc defaultCenter];
     }
 }
 
 //#import "/usr/include/Availability.h"
-//%hook UnityAppController
+%hook UnityAppController
 //
-//-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
-//{
+-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
+{
 //        if([preread(@"sw_f1") boolValue]){
 //            speedType = SW_UNITY;
 //            XLog(@"#########2");
 //            execSearch();
 //            XLog(@"--- init rev %d ---", gb_state);
-//            [x5fPmc defaultCenter];
-//        }
 //
-//    return %orig;
-//}
-//%end
+//        }
+       [x5fPmc defaultCenter];
+    return %orig;
+}
+%end
 //
 //
 //%hook AppController
