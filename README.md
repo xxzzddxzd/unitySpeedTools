@@ -11,9 +11,15 @@ English version is in wiki page
 
 # 原理
 
-1、在插件启动时，或者触屏被点按时，查找Unity的System函数（根据二进制特征）
+1、在插件启动时，在屏幕上加载一个按钮。
 
-2、使用System函数查找UnityEngine.Time::set_timeScale(System.Single)的地址，进行劫持
+2、点击按钮，会根据特征值开始查找Unity的System函数
+
+3、使用System函数查找UnityEngine.Time::set_timeScale(System.Single)的地址，进行劫持
+
+4、劫持后可开始进行变速。
+
+5、暂停时将对劫持的汇编进行还原，以便绕过某些突发的完整性校验。
 
 ## 特征值
 
