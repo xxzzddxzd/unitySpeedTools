@@ -173,7 +173,65 @@ long doLoadFramework(){
     return alsr;
 }
 
+ void memPrint64(long start, long len, int type){
+     XLog(@"memPrint64 start:0x%lx",start)
+    long now = start;
+    long end = start+len;
+    while (now<=end) {
+        if (type==1) {
+            XLog(@"0x%lx\t\t%lx\t\t%lx", now, *(long*)(now), *(long*)(now+8));
+        }
+        else if(type==2)
+        {
+            XLog(@"0x%lx\t%f\t%f\t%f\t%f", now, *(float*)(now), *(float*)(now+4), *(float*)(now+8), *(float*)(now+12));
+        }
+        now+=16;
+    }
+}
 
+
+
+NSMutableDictionary * addressDict = [[NSMutableDictionary alloc]init];
+long u3dsystemfuncAddr64_addr[5];
+long set_timeScale_addr[5];
+extern "C" {
+void aSimpleUnhook(bool isHook){
+    XLog(@"set to hook=%d? 1=hook,0=unhook",isHook)
+    long thisAddr=u3dsystemfuncAddr64_addr[0];
+    memPrint64(thisAddr,0x20,1);
+    
+    if (vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY)== KERN_SUCCESS)
+    {
+        if (isHook==1) {
+            XLog(@"hook u3dsystemfuncAddr64_addr")
+            *(long *)(thisAddr) =u3dsystemfuncAddr64_addr[3];
+            *(long *)(thisAddr+8) =u3dsystemfuncAddr64_addr[4];
+        }else{
+            XLog(@"unhook u3dsystemfuncAddr64_addr")
+            *(long *)(thisAddr) =u3dsystemfuncAddr64_addr[1];
+            *(long *)(thisAddr+8) =u3dsystemfuncAddr64_addr[2];
+        }
+        vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ  | VM_PROT_EXECUTE);
+    }
+    memPrint64(thisAddr,0x20,1);
+    thisAddr=set_timeScale_addr[0];
+    memPrint64(thisAddr,0x20,1);
+    if (vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY)== KERN_SUCCESS)
+    {
+        if (isHook==1) {
+            XLog(@"hook set_timeScale_addr")
+            *(long *)(thisAddr) =set_timeScale_addr[3];
+            *(long *)(thisAddr+8) =set_timeScale_addr[4];
+        }else{
+            XLog(@"unhook set_timeScale_addr")
+            *(long *)(thisAddr) =set_timeScale_addr[1];
+            *(long *)(thisAddr+8) =set_timeScale_addr[2];
+        }
+        vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ  | VM_PROT_EXECUTE);
+    }
+    memPrint64(thisAddr,0x20,1);
+}
+}
 static enum ENGINE_STATE setU3DHook(){
     enum ENGINE_STATE rev = SP_INIT_NIL;
 #if defined(_MAC64) || defined(__LP64__)
@@ -181,7 +239,15 @@ static enum ENGINE_STATE setU3DHook(){
     u3dsystemfuncAddr64=dosearch();
     XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
+        memPrint64(u3dsystemfuncAddr64,0x20,1);
+        u3dsystemfuncAddr64_addr[0]=(u3dsystemfuncAddr64);
+        u3dsystemfuncAddr64_addr[1]=*(long*)(u3dsystemfuncAddr64);
+        u3dsystemfuncAddr64_addr[2]=*(long*)(u3dsystemfuncAddr64+8);
+//        addressDict[@"u3dsystemfuncAddr64"][@"ori"]=@[*(long*)(u3dsystemfuncAddr64),*(long*)(u3dsystemfuncAddr64+8)];
         MSHookFunction((void *)(u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
+        u3dsystemfuncAddr64_addr[3]=*(long*)(u3dsystemfuncAddr64);
+        u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
+        memPrint64(u3dsystemfuncAddr64,0x20,1);
         rev = SP_INIT_WAIT;
         dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(queue, ^{
@@ -189,9 +255,17 @@ static enum ENGINE_STATE setU3DHook(){
             long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
             XLog(@"found set_timeScale:0x%lx",revaddr);
             if(revaddr){
+                memPrint64(revaddr,0x20,1);
+                set_timeScale_addr[0]=(revaddr);
+                set_timeScale_addr[1]=*(long*)(revaddr);
+                set_timeScale_addr[2]=*(long*)(revaddr+8);
                 MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+                set_timeScale_addr[3]=*(long*)(revaddr);
+                set_timeScale_addr[4]=*(long*)(revaddr+8);
+                memPrint64(revaddr,0x20,1);
                 gb_state=SP_INIT_DONE;
                 XLog(@"set gb_state %d",gb_state);
+                aSimpleUnhook(1);
             }
 #if 0
 //            revaddr = ne_u3dsystemfunc("UnityEngine.Application::set_targetFrameRate(System.Int32)");
@@ -338,27 +412,54 @@ extern long ne_sys_speed_control(float a1);
 %hook UnityView
 - (void)touchesBegan:(id)touches withEvent:(id)event{
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
-    if(gb_state==2 && sys_speed_control){
-        XLog(@"show x5 icon")
-        [x5fPmc showIcon];
-    }
+//    if(gb_state==2 && sys_speed_control){
+//        XLog(@"show x5 icon")
+//        [x5fPmc showIcon];
+//    }
+    XLog(@"show x5 icon")
+    [x5fPmc showIcon];
     %orig;
 }
 %end
-
-
+extern "C" {
+void startSearchAndInject(){
+    if (gb_state>=1) {
+        XLog(@"gb_state:%d，不为0，不进行重复的搜索操作",gb_state)
+        return;
+    }
+    dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
+        dispatch_async(queue, ^{
+            // 追加任务 1
+            gb_state=SP_INIT_WAIT;
+            XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
+            XLog(@"Loading UnitySpeedTools for unity engine")
+                if([preread(@"sw_f1") boolValue]){
+                  speedType = SW_UNITY;
+                  XLog(@"#########2");
+                  execSearch();
+                  XLog(@"--- init rev %d ---", gb_state);
+                }
+        });
+}
+}
 void constructor() __attribute__((constructor));
 void constructor(void)
 {
+    XLog(@"Loading UnitySpeedTools for unity engine, delay 30s")
+//dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
+//    dispatch_async(queue, ^{
+//        // 追加任务 1
+//        [NSThread sleepForTimeInterval:40];              // 模拟耗时操作
+//        XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
+//        XLog(@"Loading UnitySpeedTools for unity engine")
+//            if([preread(@"sw_f1") boolValue]){
+//              speedType = SW_UNITY;
+//              XLog(@"#########2");
+//              execSearch();
+//              XLog(@"--- init rev %d ---", gb_state);
+//            }
+//    });
     
-    XLog(@"Loading UnitySpeedTools for unity engine")
-    if([preread(@"sw_f1") boolValue]){
-      speedType = SW_UNITY;
-      XLog(@"#########2");
-      execSearch();
-      XLog(@"--- init rev %d ---", gb_state);
-//      [x5fPmc defaultCenter];
-    }
 }
 
 //#import "/usr/include/Availability.h"
@@ -366,14 +467,7 @@ void constructor(void)
 //
 -(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
 {
-//        if([preread(@"sw_f1") boolValue]){
-//            speedType = SW_UNITY;
-//            XLog(@"#########2");
-//            execSearch();
-//            XLog(@"--- init rev %d ---", gb_state);
-//
-//        }
-       [x5fPmc defaultCenter];
+    [x5fPmc defaultCenter];
     return %orig;
 }
 %end

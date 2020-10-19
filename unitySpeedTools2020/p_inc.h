@@ -10,9 +10,10 @@
 @end
 
 enum ENGINE_STATE{
-    SP_INIT_NIL,
-    SP_INIT_WAIT,
-    SP_INIT_DONE,
+    SP_INIT_NIL=0,
+    SP_INIT_WAIT=1,
+    SP_INIT_DONE=2,
+    SP_INIT_PAUSE=3,
 };
 
 extern enum ENGINE_STATE gb_state;

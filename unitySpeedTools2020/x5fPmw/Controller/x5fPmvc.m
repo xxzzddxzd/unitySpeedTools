@@ -20,6 +20,8 @@ extern float ep1;
 extern float vF1;
 bool autoSetSpeedOn = false;
 bool switchAutoSpeed;
+extern void startSearchAndInject();
+extern void aSimpleUnhook(bool);
 @interface x5fPmvc ()
 <
 UIGestureRecognizerDelegate,
@@ -53,19 +55,21 @@ x5fPsuicd
     self.customView.backgroundColor = [UIColor clearColor];
     self.customView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-//    [self.view addSubview:self.customView];
-    id<UIApplicationDelegate> app = [[UIApplication sharedApplication] delegate];
-    [app.window addSubview:self.customView];
-    
+    [self.view addSubview:self.customView];
+    XLog(@"1")
+//    id<UIApplicationDelegate> app = [[UIApplication sharedApplication] delegate];
+//    [app.window addSubview:self.customView];
+    XLog(@"2")
     self.panelView = [[UIView alloc] initWithFrame:bounds];
     self.panelView.backgroundColor = [UIColor clearColor];
     self.panelView.hidden = YES;
     self.panelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
     | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
-//    [self.view addSubview:self.panelView];
-    [app.window addSubview:self.panelView];
+    [self.view addSubview:self.panelView];
+//    [app.window addSubview:self.panelView];
+//    [app.window addSubview:self.settingsVC.navigationController.view];
     [self.panelView addSubview:self.settingsVC.navigationController.view];
-
+XLog(@"3")
     UITapGestureRecognizer *backgroundTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanelViewBackgroundTapEvent:)];
     backgroundTap.numberOfTouchesRequired = 1;
     backgroundTap.numberOfTapsRequired = 1;
@@ -80,6 +84,46 @@ x5fPsuicd
     self.avatar.autoDocking = NO;
     [self.avatar addTarget:self action:@selector(toggleAppearPanel:) forControlEvents:UIControlEventTouchUpInside];
 }
+//- (void)viewDidLoad
+//{
+//    [super viewDidLoad];
+//    CGRect bounds = [UIScreen mainScreen].bounds;
+//
+//    self.view = [[HBView alloc] initWithFrame:self.view.frame];
+//
+//    self.customView = [[HBView alloc] initWithFrame:bounds];
+//    self.customView.backgroundColor = [UIColor clearColor];
+//    self.customView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
+//    | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+////    [self.view addSubview:self.customView];
+//    XLog(@"1")
+//    id<UIApplicationDelegate> app = [[UIApplication sharedApplication] delegate];
+//    [app.window addSubview:self.customView];
+//    XLog(@"2")
+//    self.panelView = [[UIView alloc] initWithFrame:bounds];
+//    self.panelView.backgroundColor = [UIColor clearColor];
+//    self.panelView.hidden = YES;
+//    self.panelView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin
+//    | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+////    [self.view addSubview:self.panelView];
+//    [app.window addSubview:self.panelView];
+//    [app.window addSubview:self.settingsVC.navigationController.view];
+////    [self.panelView addSubview:];
+//XLog(@"3")
+//    UITapGestureRecognizer *backgroundTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanelViewBackgroundTapEvent:)];
+//    backgroundTap.numberOfTouchesRequired = 1;
+//    backgroundTap.numberOfTapsRequired = 1;
+//    backgroundTap.delegate = self;
+//    [self.panelView addGestureRecognizer:backgroundTap];
+//    [backgroundTap release];
+//
+//    // 悬浮按钮
+//
+//    self.avatar = [[x5fPdb alloc] initInView:self.customView WithFrame:CGRectMake(CGRectGetWidth(self.customView.frame) - 45.0f, CGRectGetHeight(self.customView.frame) / 2 - 150.0f, 50, 60.0f)];
+//    [self.avatar setImage:[self avatarGBImage] forState:UIControlStateNormal];
+//    self.avatar.autoDocking = NO;
+//    [self.avatar addTarget:self action:@selector(toggleAppearPanel:) forControlEvents:UIControlEventTouchUpInside];
+//}
 
 - (void)didReceiveMemoryWarning
 {
@@ -154,7 +198,38 @@ x5fPsuicd
 //    bool switchAutoSpeed =  [(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sw_faston") boolValue];
     
     if (switchAutoSpeed) {
-        [self.avatar setImage:[self avatarGBImageSpeedBio] forState:UIControlStateNormal];
+        XLog(@"touch button")
+        XLog(@"gb_state:%d",gb_state)
+        switch (gb_state) {
+            case 0:{
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                        message:@"Unity控速函数尚未确认，是否开始初始化？"
+                                                                       delegate:self
+                                                              cancelButtonTitle:@"确定"
+                                                              otherButtonTitles:@"取消",nil];
+                //        [alert setTag:0x26];
+                        [alert show];
+                        [alert release];
+            }
+                break;
+            case 1:
+                {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                            message:@"正在执行初始化，请稍后"
+                                                                           delegate:nil
+                                                                  cancelButtonTitle:@"确定"
+                                                          otherButtonTitles:nil];
+                    //        [alert setTag:0x26];
+                            [alert show];
+                            [alert release];
+                }
+                break;
+            case 2:{
+                 [self.avatar setImage:[self avatarGBImageSpeedBio] forState:UIControlStateNormal];
+                break;
+            }
+
+        }
     }
     else{
         [self.avatar setImage:[self avatarGBImage] forState:UIControlStateNormal];
@@ -168,7 +243,19 @@ x5fPsuicd
         }
     }
 }
-
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    XLog(@"%ld", (long)buttonIndex);
+    if (buttonIndex ==1 ){
+        
+        XLog(@"点击了取消")
+    }
+    else{
+        XLog(@"开始执行注入")
+        startSearchAndInject();
+    }
+    
+}
 - (void)handlePanelViewBackgroundTapEvent:(UITapGestureRecognizer *)sender
 {
     CGPoint touch = [sender locationInView:self.panelView];
@@ -282,6 +369,7 @@ x5fPsuicd
     CGRect textRect = CGRectMake(8, 14, 30, 17);
     [color setFill];
     if (autoSetSpeedOn == false) {
+        aSimpleUnhook(1);
         autoSetSpeedOn = true;
 //        NSLog(@"%d %d",[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sw_faston") boolValue] ,[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sc_jqsz") intValue]);
         float sc_jqsz = [[self preread:@"sc_jqsz"] floatValue];
@@ -299,6 +387,7 @@ x5fPsuicd
     }
     else{
         autoSetSpeedOn = false;
+        aSimpleUnhook(0);
         [@"暂停中" drawInRect: textRect withFont: [UIFont fontWithName: @"Helvetica-Bold" size: 10] lineBreakMode: NSLineBreakByWordWrapping alignment: NSTextAlignmentCenter];
         [x5fP ss1:0];
     }
