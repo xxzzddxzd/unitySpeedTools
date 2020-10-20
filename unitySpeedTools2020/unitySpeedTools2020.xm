@@ -222,10 +222,12 @@ void aSimpleUnhook(bool isHook){
             XLog(@"hook set_timeScale_addr")
             *(long *)(thisAddr) =set_timeScale_addr[3];
             *(long *)(thisAddr+8) =set_timeScale_addr[4];
+            XLog(@"hook set_timeScale_addr done")
         }else{
             XLog(@"unhook set_timeScale_addr")
             *(long *)(thisAddr) =set_timeScale_addr[1];
             *(long *)(thisAddr+8) =set_timeScale_addr[2];
+            XLog(@"unhook set_timeScale_addr done")
         }
         vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ  | VM_PROT_EXECUTE);
     }
@@ -248,41 +250,42 @@ static enum ENGINE_STATE setU3DHook(){
         u3dsystemfuncAddr64_addr[3]=*(long*)(u3dsystemfuncAddr64);
         u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
         memPrint64(u3dsystemfuncAddr64,0x20,1);
-        rev = SP_INIT_WAIT;
-        dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(queue, ^{
-            sleep(3);
-            long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-            XLog(@"found set_timeScale:0x%lx",revaddr);
-            if(revaddr){
-                memPrint64(revaddr,0x20,1);
-                set_timeScale_addr[0]=(revaddr);
-                set_timeScale_addr[1]=*(long*)(revaddr);
-                set_timeScale_addr[2]=*(long*)(revaddr+8);
-                MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-                set_timeScale_addr[3]=*(long*)(revaddr);
-                set_timeScale_addr[4]=*(long*)(revaddr+8);
-                memPrint64(revaddr,0x20,1);
-                gb_state=SP_INIT_DONE;
-                XLog(@"set gb_state %d",gb_state);
-                aSimpleUnhook(1);
-            }
-#if 0
-//            revaddr = ne_u3dsystemfunc("UnityEngine.Application::set_targetFrameRate(System.Int32)");
-//            XLog(@"found set_targetFrameRate:0x%lx",revaddr);
+        gb_state=SP_INIT_WAIT;
+        XLog(@"setU3DHook set gb_state %d",gb_state);
+//        dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+//        dispatch_async(queue, ^{
+//            sleep(3);
+//            long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+//            XLog(@"found set_timeScale:0x%lx",revaddr);
 //            if(revaddr){
-////                MSHookFunction((void *)(revaddr), (void *)ne_sys_set_targetFrameRate, (void **)&sys_set_targetFrameRate);
-////                ne_sys_set_targetFrameRate(60);
+//                memPrint64(revaddr,0x20,1);
+//                set_timeScale_addr[0]=(revaddr);
+//                set_timeScale_addr[1]=*(long*)(revaddr);
+//                set_timeScale_addr[2]=*(long*)(revaddr+8);
+//                MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+//                set_timeScale_addr[3]=*(long*)(revaddr);
+//                set_timeScale_addr[4]=*(long*)(revaddr+8);
+//                memPrint64(revaddr,0x20,1);
+//                gb_state=SP_INIT_DONE;
+//                XLog(@"setU3DHook set gb_state %d",gb_state);
+//                aSimpleUnhook(1);
 //            }
-//            revaddr = ne_u3dsystemfunc("UnityEngine.Application::get_targetFrameRate()");
-//            XLog(@"found get_targetFrameRate:0x%lx",revaddr);
-//            if(revaddr){
-//                MSHookFunction((void *)(revaddr), (void *)ne_sys_get_targetFrameRate, (void **)&sys_get_targetFrameRate);
-////                ne_sys_get_targetFrameRate();
-//            }
-//            //ne_sys_speed_control(5);
-#endif
-        });
+//        });
+        long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        XLog(@"found set_timeScale:0x%lx",revaddr);
+        if(revaddr){
+            memPrint64(revaddr,0x20,1);
+            set_timeScale_addr[0]=(revaddr);
+            set_timeScale_addr[1]=*(long*)(revaddr);
+            set_timeScale_addr[2]=*(long*)(revaddr+8);
+            MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+            set_timeScale_addr[3]=*(long*)(revaddr);
+            set_timeScale_addr[4]=*(long*)(revaddr+8);
+            memPrint64(revaddr,0x20,1);
+            gb_state=SP_INIT_DONE;
+            XLog(@"setU3DHook set gb_state %d",gb_state);
+            aSimpleUnhook(1);
+        }
     }
 #else
 //    long timeScaleHookAddr=0,timeManagerHookAddr=0;
@@ -442,6 +445,7 @@ void startSearchAndInject(){
         });
 }
 }
+
 void constructor() __attribute__((constructor));
 void constructor(void)
 {

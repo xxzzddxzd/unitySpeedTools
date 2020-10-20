@@ -260,6 +260,7 @@ int getTimeScale32(int in_start, int in_end){
  */
 #if defined(_MAC64) || defined(__LP64__)
 void cspeed64(){
+    if(gb_state == SP_INIT_DONE){
     float k = vF1;
     if (!isF1) {
         k=1.0;
@@ -271,6 +272,10 @@ void cspeed64(){
         *(float*)(lastR0x64+0xcc) = k;
     }*/
     ne_sys_speed_control(k);
+    }
+    else{
+        XLog(@"gbstate not done:%d",gb_state)
+    }
 }
 #else
 void cspeed32(){
@@ -293,70 +298,70 @@ void cspeedCocoa2d(){
     XLog(@"set speed %d",speed_coco2d);
 }
 
-/*
- 此处获取lastR0地址，只由系统调用
- 由于Hook了流程函数，关闭时走原速度，打开时走设定速度
- */
-#if defined(_MAC64) || defined(__LP64__)
-//20211ea80000540820201e6b
-long ne_x5TimeScalex64(long x0, float x1)
-{
-   // XLog(@"#############x64x64x64x64 %ld %f",*(long*)(x0+0xcc),x1);
-    if (lastR0x64 == 0) {
-        lastR0x64 = x0;
-        gb_state = SP_INIT_DONE;
-        [x5fPmc showIcon];
-    }
-    cspeed64();
-    return 0;
-}
-#else
-////41EC101B9FED132A
-int ne_x5TimeScale(int r0, int r1)
-{
-    //XLog(@"#############x32x32x32x32x32 r0:%x lastR0:%lx %f",r0, lastR0, vF1);
-    if (lastR0 == 0) {
-        lastR0 = r0;
-        gb_state = SP_INIT_DONE;
-        [x5fPmc showIcon];
-    }
-    cspeed32();
-    return 0;
-}
-#endif
-
-/*
- 此处获取lastR0地址，只由系统调用
- */
-#if defined(_MAC64) || defined(__LP64__)
-
-long ne_x5TimeManagerx64(long r0){
-    long rev = x5TimeManagerx64(r0);
-    //XLog(@"*******************In TimeManagerx64 r0 0x%lx, rev 0x%lx",r0, rev);
-    lastR0x64=r0;
-    return rev;
-}
-#else
-int ne_x5TimeManager(int r0){
-    int rev = x5TimeManager(r0);
-    //XLog(@"*******************In TimeManager r0 0x%x, rev 0x%x",r0, rev);
-    lastR0=r0;
-    return rev;
-}
-#endif
-
-
-/*
- 此处获取lastR0地址，自行调用
- */
-#if defined(_MAC64) || defined(__LP64__)
-long ne_x5TimeManagerNew(){
-    long rev = x5TimeManagerNew();
-    //XLog(@"*******************In x5TimeManagerNew rev 0x%lx", rev);
-    lastR0x64=rev;
-    return rev;
-}
-#endif
+///*
+// 此处获取lastR0地址，只由系统调用
+// 由于Hook了流程函数，关闭时走原速度，打开时走设定速度
+// */
+//#if defined(_MAC64) || defined(__LP64__)
+////20211ea80000540820201e6b
+//long ne_x5TimeScalex64(long x0, float x1)
+//{
+//   // XLog(@"#############x64x64x64x64 %ld %f",*(long*)(x0+0xcc),x1);
+//    if (lastR0x64 == 0) {
+//        lastR0x64 = x0;
+//        gb_state = SP_INIT_DONE;
+////        [x5fPmc showIcon];
+//    }
+//    cspeed64();
+//    return 0;
+//}
+//#else
+//////41EC101B9FED132A
+//int ne_x5TimeScale(int r0, int r1)
+//{
+//    //XLog(@"#############x32x32x32x32x32 r0:%x lastR0:%lx %f",r0, lastR0, vF1);
+//    if (lastR0 == 0) {
+//        lastR0 = r0;
+//        gb_state = SP_INIT_DONE;
+////        [x5fPmc showIcon];
+//    }
+//    cspeed32();
+//    return 0;
+//}
+//#endif
+//
+///*
+// 此处获取lastR0地址，只由系统调用
+// */
+//#if defined(_MAC64) || defined(__LP64__)
+//
+//long ne_x5TimeManagerx64(long r0){
+//    long rev = x5TimeManagerx64(r0);
+//    //XLog(@"*******************In TimeManagerx64 r0 0x%lx, rev 0x%lx",r0, rev);
+//    lastR0x64=r0;
+//    return rev;
+//}
+//#else
+//int ne_x5TimeManager(int r0){
+//    int rev = x5TimeManager(r0);
+//    //XLog(@"*******************In TimeManager r0 0x%x, rev 0x%x",r0, rev);
+//    lastR0=r0;
+//    return rev;
+//}
+//#endif
+//
+//
+///*
+// 此处获取lastR0地址，自行调用
+// */
+//#if defined(_MAC64) || defined(__LP64__)
+//long ne_x5TimeManagerNew(){
+//    long rev = x5TimeManagerNew();
+//    //XLog(@"*******************In x5TimeManagerNew rev 0x%lx", rev);
+//    lastR0x64=rev;
+//    return rev;
+//}
+//#endif
 
 
 /*

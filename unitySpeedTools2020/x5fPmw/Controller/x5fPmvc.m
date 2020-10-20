@@ -224,7 +224,8 @@ XLog(@"3")
                             [alert release];
                 }
                 break;
-            case 2:{
+            case 2:
+            case 3:{
                  [self.avatar setImage:[self avatarGBImageSpeedBio] forState:UIControlStateNormal];
                 break;
             }
@@ -370,6 +371,7 @@ XLog(@"3")
     [color setFill];
     if (autoSetSpeedOn == false) {
         aSimpleUnhook(1);
+        gb_state=SP_INIT_DONE;
         autoSetSpeedOn = true;
 //        NSLog(@"%d %d",[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sw_faston") boolValue] ,[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sc_jqsz") intValue]);
         float sc_jqsz = [[self preread:@"sc_jqsz"] floatValue];
@@ -387,9 +389,11 @@ XLog(@"3")
     }
     else{
         autoSetSpeedOn = false;
+        [x5fP ss1:0];
+        gb_state=SP_INIT_PAUSE;
         aSimpleUnhook(0);
         [@"暂停中" drawInRect: textRect withFont: [UIFont fontWithName: @"Helvetica-Bold" size: 10] lineBreakMode: NSLineBreakByWordWrapping alignment: NSTextAlignmentCenter];
-        [x5fP ss1:0];
+        
     }
     
     

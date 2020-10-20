@@ -223,10 +223,12 @@ void aSimpleUnhook(bool isHook){
             XLog(@"hook set_timeScale_addr")
             *(long *)(thisAddr) =set_timeScale_addr[3];
             *(long *)(thisAddr+8) =set_timeScale_addr[4];
+            XLog(@"hook set_timeScale_addr done")
         }else{
             XLog(@"unhook set_timeScale_addr")
             *(long *)(thisAddr) =set_timeScale_addr[1];
             *(long *)(thisAddr+8) =set_timeScale_addr[2];
+            XLog(@"unhook set_timeScale_addr done")
         }
         vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ  | VM_PROT_EXECUTE);
     }
@@ -249,25 +251,8 @@ static enum ENGINE_STATE setU3DHook(){
         u3dsystemfuncAddr64_addr[3]=*(long*)(u3dsystemfuncAddr64);
         u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
         memPrint64(u3dsystemfuncAddr64,0x20,1);
-        rev = SP_INIT_WAIT;
-        dispatch_queue_t queue =  dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(queue, ^{
-            sleep(3);
-            long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-            XLog(@"found set_timeScale:0x%lx",revaddr);
-            if(revaddr){
-                memPrint64(revaddr,0x20,1);
-                set_timeScale_addr[0]=(revaddr);
-                set_timeScale_addr[1]=*(long*)(revaddr);
-                set_timeScale_addr[2]=*(long*)(revaddr+8);
-                MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-                set_timeScale_addr[3]=*(long*)(revaddr);
-                set_timeScale_addr[4]=*(long*)(revaddr+8);
-                memPrint64(revaddr,0x20,1);
-                gb_state=SP_INIT_DONE;
-                XLog(@"set gb_state %d",gb_state);
-                aSimpleUnhook(1);
-            }
+        gb_state=SP_INIT_WAIT;
+        XLog(@"setU3DHook set gb_state %d",gb_state);
 
 
 
@@ -283,7 +268,25 @@ static enum ENGINE_STATE setU3DHook(){
 
 
 
-        });
+
+
+
+
+        long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        XLog(@"found set_timeScale:0x%lx",revaddr);
+        if(revaddr){
+            memPrint64(revaddr,0x20,1);
+            set_timeScale_addr[0]=(revaddr);
+            set_timeScale_addr[1]=*(long*)(revaddr);
+            set_timeScale_addr[2]=*(long*)(revaddr+8);
+            MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+            set_timeScale_addr[3]=*(long*)(revaddr);
+            set_timeScale_addr[4]=*(long*)(revaddr+8);
+            memPrint64(revaddr,0x20,1);
+            gb_state=SP_INIT_DONE;
+            XLog(@"setU3DHook set gb_state %d",gb_state);
+            aSimpleUnhook(1);
+        }
     }
 #else
 
@@ -431,10 +434,10 @@ extern long ne_sys_speed_control(float a1);
 #define _LOGOS_RETURN_RETAINED
 #endif
 
-@class UnityAppController; @class UnityView; 
+@class UnityView; @class UnityAppController; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 412 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 415 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -468,6 +471,7 @@ void startSearchAndInject(){
         });
 }
 }
+
 void constructor() __attribute__((constructor));
 void constructor(void)
 {
@@ -583,4 +587,4 @@ static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLau
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);} }
-#line 558 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 562 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
