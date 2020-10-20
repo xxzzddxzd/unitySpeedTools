@@ -260,7 +260,7 @@ int getTimeScale32(int in_start, int in_end){
  */
 #if defined(_MAC64) || defined(__LP64__)
 void cspeed64(){
-    if(gb_state == SP_INIT_DONE){
+//    if(gb_state == SP_INIT_DONE){
     float k = vF1;
     if (!isF1) {
         k=1.0;
@@ -272,10 +272,10 @@ void cspeed64(){
         *(float*)(lastR0x64+0xcc) = k;
     }*/
     ne_sys_speed_control(k);
-    }
-    else{
-        XLog(@"gbstate not done:%d",gb_state)
-    }
+//    }
+//    else{
+//        XLog(@"gbstate not done:%d",gb_state)
+//    }
 }
 #else
 void cspeed32(){

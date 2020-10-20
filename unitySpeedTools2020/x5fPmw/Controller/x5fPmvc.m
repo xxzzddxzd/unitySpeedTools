@@ -388,8 +388,9 @@ XLog(@"3")
         [x5fP ss1:1];
     }
     else{
-        autoSetSpeedOn = false;
         [x5fP ss1:0];
+        autoSetSpeedOn = false;
+        
         gb_state=SP_INIT_PAUSE;
         aSimpleUnhook(0);
         [@"暂停中" drawInRect: textRect withFont: [UIFont fontWithName: @"Helvetica-Bold" size: 10] lineBreakMode: NSLineBreakByWordWrapping alignment: NSTextAlignmentCenter];
