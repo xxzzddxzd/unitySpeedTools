@@ -1,11 +1,3 @@
-//
-//  XXCustomAlertView.m
-//  XXSecure
-//
-//  Created by Kloudz Liang on 13-3-30.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import "x5fPav.h"
 #import "x5fPavm.h"
 #import "x5fPl.h"

@@ -1,11 +1,3 @@
-//
-//  XXModCellObject.m
-//  MyTest
-//
-//  Created by 陈列奋 on 7/9/14.
-//  Copyright (c) 2014 test. All rights reserved.
-//
-
 #import "x5fPmco.h"
 
 @implementation x5fPmco

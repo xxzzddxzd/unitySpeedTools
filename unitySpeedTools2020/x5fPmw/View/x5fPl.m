@@ -1,11 +1,3 @@
-//
-//  XXLine.m
-//  XXSecure
-//
-//  Created by Kloudz Liang on 13-10-21.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import "x5fPl.h"
 
 @implementation x5fPl

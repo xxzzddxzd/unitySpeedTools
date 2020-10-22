@@ -1,11 +1,3 @@
-//
-//  XXModCellObject.h
-//  MyTest
-//
-//  Created by 陈列奋 on 7/9/14.
-//  Copyright (c) 2014 test. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 
 typedef enum{

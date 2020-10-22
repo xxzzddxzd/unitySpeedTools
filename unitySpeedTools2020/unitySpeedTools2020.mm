@@ -74,14 +74,9 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
     isF1 = isOn;
     switch (speedType) {
         case SW_UNITY:
-#if defined(_MAC64) || defined(__LP64__)
             cspeed64();
-#else
-            cspeed32();
-#endif
             break;
         case SW_COCO2D:
-            cspeedCocoa2d();
             break;
         default:
             break;
@@ -91,6 +86,7 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
 }
 
 + (void)ss2:(float)spValue{
+    XLog(@"setVf1:%f isF1 %d,ep1:%f,ep2:%f",spValue,isF1,ep1,ep2);
     if (spValue>ep2) {
         spValue=ep2;
     }
@@ -105,20 +101,15 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
     }
 
 
-    XLog(@"setVf1:%f isF1 %d",spValue,isF1);
+
     vF1 = spValue;
     
     
     switch (speedType) {
         case SW_UNITY:
-#if defined(_MAC64) || defined(__LP64__)
             cspeed64();
-#else
-            cspeed32();
-#endif
             break;
         case SW_COCO2D:
-            cspeedCocoa2d();
             break;
         default:
             break;
@@ -232,42 +223,20 @@ void aSimpleUnhook(bool isHook){
 }
 }
 static enum ENGINE_STATE setU3DHook(){
-    enum ENGINE_STATE rev = SP_INIT_NIL;
-#if defined(_MAC64) || defined(__LP64__)
+
+    gb_state=SP_INIT_NIL;
     long u3dsystemfuncAddr64=0;
     u3dsystemfuncAddr64=dosearch();
     XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
-        memPrint64(u3dsystemfuncAddr64,0x20,1);
         u3dsystemfuncAddr64_addr[0]=(u3dsystemfuncAddr64);
         u3dsystemfuncAddr64_addr[1]=*(long*)(u3dsystemfuncAddr64);
         u3dsystemfuncAddr64_addr[2]=*(long*)(u3dsystemfuncAddr64+8);
-
         MSHookFunction((void *)(u3dsystemfuncAddr64), (void *)ne_u3dsystemfunc, (void **)&u3dsystemfunc);
         u3dsystemfuncAddr64_addr[3]=*(long*)(u3dsystemfuncAddr64);
         u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
-        memPrint64(u3dsystemfuncAddr64,0x20,1);
         gb_state=SP_INIT_WAIT;
         XLog(@"setU3DHook set gb_state %d",gb_state);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
         unhooku3dsystemfuncAddr64();
         XLog(@"found set_timeScale:0x%lx",revaddr);
@@ -285,33 +254,7 @@ static enum ENGINE_STATE setU3DHook(){
             aSimpleUnhook(1);
         }
     }
-#else
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif
-
-
-    return rev;
+    return gb_state;
 }
 
 static NSString * preread(NSString * forKey)
@@ -325,88 +268,6 @@ static NSString * preread(NSString * forKey)
 
 
 
-typedef void (^x5audtdbl)(void);
-@interface x5audcla : NSObject
-{
-    
-}
-+(void)x5audTd:(x5audtdbl) block;
-@end
-
-
-@implementation x5audcla
-static x5audcla *threadOperation = nil;
-- (void)perfrombgg:(x5audtdbl) block {
-    @autoreleasepool {
-        block();
-    }
-}
-
-
-+(void)x5audTd:(x5audtdbl) block {
-    XLog(@"######LODING X5AUDTD######");
-    @synchronized(threadOperation) {
-        if(threadOperation == nil) {
-            threadOperation = [[x5audcla alloc] init];
-        }
-    }
-    [NSThread detachNewThreadSelector:@selector(perfrombgg:) toTarget:threadOperation withObject:[[block copy] autorelease]];
-}
-@end
-
-int (*_gettime)(struct timeval *tp, struct timezone *tzp);
-int (*_old_gettime)(struct timeval *tp, struct timezone *tzp);
-int new_gettime(struct timeval *tp, struct timezone *tzp);
-
-static void setHookSpeed()
-{
-    _gettime = (int (*)(struct timeval *, struct timezone *))MSFindSymbol(NULL,"_gettimeofday");
-    NSLog(@"###############%lx",(long)_gettime);
-    MSHookFunction((void *)(_gettime), (void *)new_gettime, (void **)&_old_gettime);
-}
-
-
-#define USECSCALE   (1000000LL)
-int speed_coco2d = 1;
-
-static int64_t  lastUSecs;  
-static int64_t  lastOrigUSecs = 0;  
-
-
-int new_gettime(struct timeval *tp, struct timezone *tzp)
-{
-    int result = _old_gettime(tp, tzp);
-    
-    
-    
-    if(result != 0)
-        return result;
-    
-    
-
-
-
-    if( lastOrigUSecs != 0) {
-        
-        int64_t currentUSecs = (tp->tv_sec ) * USECSCALE + tp->tv_usec;
-        int64_t dt =  currentUSecs - lastOrigUSecs;
-        
-        lastOrigUSecs = currentUSecs;
-        lastUSecs += (dt * speed_coco2d*1000) / 1000;
-        
-        
-        tp->tv_sec = lastUSecs / USECSCALE;
-        tp->tv_usec = lastUSecs - (tp->tv_sec * USECSCALE );
-        
-        
-    } else {
-        lastOrigUSecs = tp->tv_sec * USECSCALE + tp->tv_usec;
-        
-        lastUSecs = tp->tv_sec * USECSCALE + tp->tv_usec;
-        
-    }
-    return result;
-}
 extern long (*sys_speed_control)(float);
 extern long ne_sys_speed_control(float a1);
 
@@ -434,7 +295,7 @@ extern long ne_sys_speed_control(float a1);
 @class UnityView; @class UnityAppController; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 412 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 273 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -455,7 +316,6 @@ void startSearchAndInject(){
     }
     dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
         dispatch_async(queue, ^{
-            
             gb_state=SP_INIT_WAIT;
             XLog(@"1---%@",[NSThread currentThread]);      
             XLog(@"Loading UnitySpeedTools for unity engine")
@@ -494,94 +354,12 @@ void constructor(void)
 
 
 static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
+    startSearchAndInject();
     [x5fPmc defaultCenter];
+    
     return _logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);} }
-#line 559 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 337 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"

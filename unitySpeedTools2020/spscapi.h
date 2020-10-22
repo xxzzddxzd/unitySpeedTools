@@ -1,11 +1,3 @@
-//
-//  spscapi.h
-//  unitySpeedTools
-//
-//  Created by 徐正达 on 16/5/24.
-//
-//
-
 #ifndef spscapi_h
 #define spscapi_h
 

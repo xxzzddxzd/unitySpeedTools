@@ -1,11 +1,3 @@
-//
-//  HBView.m
-//  HBDanMu
-//
-//  Created by Hubert on 14-4-30.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #import "HBView.h"
 
 @implementation HBView

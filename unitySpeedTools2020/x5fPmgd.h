@@ -1,11 +1,3 @@
-//
-//  XXModGlobalDefines.h
-//  XXModWidgetExample
-//
-//  Created by Hubert on 14-7-10.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #ifndef XXModGlobalDefines_H_Hubert
 #define XXModGlobalDefines_H_Hubert
 

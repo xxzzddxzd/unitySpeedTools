@@ -1,9 +1,3 @@
-//
-//  getU3dsystemfunc.m
-//  unitySpeedTools
-//
-//  Created by 徐正达 on 2019/3/22.
-//  搜索Unity的System函数，用于直接控制变速函数。
 #import "p_inc.h"
 #import <mach/mach_init.h>
 #import <mach/vm_map.h>

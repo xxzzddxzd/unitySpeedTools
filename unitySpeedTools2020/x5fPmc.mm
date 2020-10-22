@@ -1,11 +1,3 @@
-//
-//  XXModCenter.m
-//  XXModUIExample
-//
-//  Created by Hubert on 14-7-10.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #import "x5fPmc.h"
 #import "HBWindow.h"
 #import "x5fPsvc.h"
@@ -37,6 +29,7 @@ x5fPsd
     dispatch_once(&onceToken, ^{
         NSLog(@"defaultCenter 1");
         sharedInstance = [[self alloc] init];
+        
     });
     return sharedInstance;
 }
@@ -49,24 +42,15 @@ x5fPsd
 }
 -(int) getParaCfg
 {
-    NSString * revStr;
-    NSArray * naRecv = [revStr componentsSeparatedByString:@";"];
-    NSArray * para = [[naRecv objectAtIndex:1] componentsSeparatedByString:@","];
-    NSLog(@"%@",naRecv);
-    NSLog(@"%@",para);
     p1 = -4;
-    p2 = 30;
+    p2 = 10;
     ep1 = -4;
-    ep2 = 30;
-    if ([[self preread:@"sw_f4"] boolValue]) {
-        if (p2>[[self preread:@"sc_f4"] intValue]) {
-            p2 = [[self preread:@"sc_f4"] intValue];
-        }
-    }
-    
-    if (speedType==SW_COCO2D) {
-        p1=1;
-    }
+    ep2 = 10;
+//    if ([[self preread:@"sw_f4"] boolValue]) {
+//        if (p2>[[self preread:@"sc_f4"] intValue]) {
+//            p2 = [[self preread:@"sc_f4"] intValue];
+//        }
+//    }
     NSLog(@"getParaCfg 6");
     return 0;
 }
@@ -74,6 +58,7 @@ x5fPsd
 - (id)init
 {
     NSLog(@"fpmc init");
+    [self getParaCfg];
     self = [super init];
     if (self) {
        [self configuredDataSource];
@@ -110,8 +95,10 @@ x5fPsd
 
 - (void)configuredDataSource
 {
+    XLog(@"configuredDataSource p1:%d,p2:%d",p1,p2)
     self.dataSource = @[];
     x5fPmco *object00 = [[x5fPmco alloc] initSwitchTypeWithTitle:kTextRowTitle00 toggle:NO];
+//    x5fPmco *object01 = [[x5fPmco alloc] initSliderTypeWithTitle:kTextRowTitle01 value:1 defaultValue:1 minValue:0 maxValue:10];
     x5fPmco *object01 = [[x5fPmco alloc] initSliderTypeWithTitle:kTextRowTitle01 value:1 defaultValue:1 minValue:p1 maxValue:p2];
 //    x5fPmco *object02 = [[x5fPmco alloc] initSwitchTypeWithTitle:kTextRowTitle02 toggle:YES];
     
@@ -212,6 +199,7 @@ x5fPsd
                 [x5fP ss1:value.toggleValue];
                 break;
             case 1:
+                XLog(@"detailsValue %f",value.sliderValue)
                 [x5fP ss2:value.sliderValue];
                 break;
 //            case 2:

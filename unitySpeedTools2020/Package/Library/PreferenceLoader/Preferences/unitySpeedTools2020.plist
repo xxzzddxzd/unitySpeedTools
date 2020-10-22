@@ -14,35 +14,7 @@
 			<key>key</key>
 			<string>sw_f1</string>
 			<key>label</key>
-			<string>Unity类型加速</string>
-			<key>PostNotification</key>
-			<string>unitySpeedTools2020loader-preferencesChanged</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>unitySpeedTools2020loader</string>
-			<key>key</key>
-			<string>sw_f2</string>
-			<key>label</key>
-			<string>AppController类型加速</string>
-			<key>PostNotification</key>
-			<string>unitySpeedTools2020loader-preferencesChanged</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>unitySpeedTools2020loader</string>
-			<key>key</key>
-			<string>sw_f3</string>
-			<key>label</key>
-			<string>AppDelegate类型加速</string>
+			<string>Unity</string>
 			<key>PostNotification</key>
 			<string>unitySpeedTools2020loader-preferencesChanged</string>
 		</dict>
@@ -93,38 +65,6 @@
 			<string>PSGroupCell</string>
 			<key>footerText</key>
 			<string>开启滑条上限值开关后，可在设置范围内进行更精确的调整。</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>unitySpeedTools2020loader</string>
-			<key>key</key>
-			<string>sw_f4</string>
-			<key>label</key>
-			<string>设置滑条上限值</string>
-			<key>PostNotification</key>
-			<string>unitySpeedTools2020loader-preferencesChanged</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSliderCell</string>
-			<key>default</key>
-			<integer>30</integer>
-			<key>defaults</key>
-			<string>unitySpeedTools2020loader</string>
-			<key>key</key>
-			<string>sc_f4</string>
-			<key>min</key>
-			<integer>1</integer>
-			<key>max</key>
-			<integer>30</integer>
-			<key>showValue</key>
-			<true/>
-			<key>PostNotification</key>
-			<string>unitySpeedTools2020loader-preferencesChanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>

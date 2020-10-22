@@ -1,11 +1,3 @@
-//
-//  XXDraggableButton.m
-//  HBDraggableButton
-//
-//  Created by Hubert on 14-2-18.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #import "x5fPdb.h"
 
 #define XX_WAITING_KEYWINDOW_AVAILABLE 0.f

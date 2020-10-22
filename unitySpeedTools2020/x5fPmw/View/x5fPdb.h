@@ -1,11 +1,3 @@
-//
-//  XXDraggableButton.h
-//  HBDraggableButton
-//
-//  Created by Hubert on 14-2-18.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
 @interface x5fPdb : UIButton  //XXDraggableButton

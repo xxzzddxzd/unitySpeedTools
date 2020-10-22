@@ -1,11 +1,3 @@
-//
-//  XXModViewController.m
-//  XXModWidgetExample
-//
-//  Created by Hubert on 14-7-10.
-//  Copyright (c) 2014年 Hubert. All rights reserved.
-//
-
 #import "x5fPmvc.h"
 #import "x5fPmgd.h"
 #import "HBView.h"
@@ -41,6 +33,7 @@ x5fPsuicd
         // Custom initialization
     }
     switchAutoSpeed =  [[self preread:@"sw_faston"] boolValue];
+//    switchAutoSpeed = 1;
     return self;
 }
 
@@ -195,9 +188,9 @@ XLog(@"3")
         return;
     }
     
-//    bool switchAutoSpeed =  [(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sw_faston") boolValue];
+    bool switchAutoSpeed =  [[self preread:@"sw_faston"] boolValue];
     
-    if (switchAutoSpeed) {
+//    if (switchAutoSpeed) {
         XLog(@"touch button")
         XLog(@"gb_state:%d",gb_state)
         switch (gb_state) {
@@ -207,42 +200,51 @@ XLog(@"3")
                                                                        delegate:self
                                                               cancelButtonTitle:@"确定"
                                                               otherButtonTitles:@"取消",nil];
-                //        [alert setTag:0x26];
                         [alert show];
                         [alert release];
             }
                 break;
-            case 1:
-                {
+            case 1:{
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
                                                                             message:@"正在执行初始化，请稍后"
                                                                            delegate:nil
                                                                   cancelButtonTitle:@"确定"
                                                           otherButtonTitles:nil];
-                    //        [alert setTag:0x26];
                             [alert show];
                             [alert release];
                 }
                 break;
             case 2:
             case 3:{
-                 [self.avatar setImage:[self avatarGBImageSpeedBio] forState:UIControlStateNormal];
+                if([[self preread:@"sw_faston"] boolValue]){
+                    [self.avatar setImage:[self avatarGBImageSpeedBio] forState:UIControlStateNormal];
+                }else{
+                    [self.avatar setImage:[self avatarGBImage] forState:UIControlStateNormal];
+                    if ([self.avatar isHidden] && ![self.panelView isHidden]) {
+                        self.avatar.hidden = NO;
+                        self.panelView.hidden = YES;
+                    }
+                    else if (![self.avatar isHidden] && [self.panelView isHidden]) {
+                        self.avatar.hidden = YES;
+                        self.panelView.hidden = NO;
+                    }
+                }
                 break;
             }
 
         }
-    }
-    else{
-        [self.avatar setImage:[self avatarGBImage] forState:UIControlStateNormal];
-        if ([self.avatar isHidden] && ![self.panelView isHidden]) {
-            self.avatar.hidden = NO;
-            self.panelView.hidden = YES;
-        }
-        else if (![self.avatar isHidden] && [self.panelView isHidden]) {
-            self.avatar.hidden = YES;
-            self.panelView.hidden = NO;
-        }
-    }
+//    }
+//    else{
+//        [self.avatar setImage:[self avatarGBImage] forState:UIControlStateNormal];
+//        if ([self.avatar isHidden] && ![self.panelView isHidden]) {
+//            self.avatar.hidden = NO;
+//            self.panelView.hidden = YES;
+//        }
+//        else if (![self.avatar isHidden] && [self.panelView isHidden]) {
+//            self.avatar.hidden = YES;
+//            self.panelView.hidden = NO;
+//        }
+//    }
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -375,7 +377,9 @@ XLog(@"3")
         autoSetSpeedOn = true;
 //        NSLog(@"%d %d",[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sw_faston") boolValue] ,[(NSNumber*)callrel_g->FUNC_GETPREFERENCE(@"sc_jqsz") intValue]);
         float sc_jqsz = [[self preread:@"sc_jqsz"] floatValue];
-        if ([[self preread:@"sw_faston"] boolValue] && [[self preread:@"sc_jqsz"] floatValue]>0) {
+        if (
+//            [[self preread:@"sw_faston"] boolValue] &&
+            [[self preread:@"sc_jqsz"] floatValue]>0) {
             vF1 = sc_jqsz;
             NSLog(@"get speed setting 1 %f",vF1);
         }else{

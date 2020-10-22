@@ -1,11 +1,3 @@
-//
-//  HBWindow.m
-//  HBDanMuPlugin
-//
-//  Created by Hubert on 14-5-4.
-//
-//
-
 #import "HBWindow.h"
 
 @implementation HBWindow

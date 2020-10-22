@@ -1,11 +1,3 @@
-//
-//  XXCustomAlertView.h
-//  XXSecure
-//
-//  Created by Kloudz Liang on 13-3-30.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 //[UIColor colorWithCGColor:[UIColor redColor].CGColor]
 // alertView背景颜色

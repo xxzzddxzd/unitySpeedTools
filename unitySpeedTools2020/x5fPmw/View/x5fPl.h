@@ -1,11 +1,3 @@
-//
-//  XXLine.h
-//  XXSecure
-//
-//  Created by Kloudz Liang on 13-10-25.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
 #define XX_LINE_DEFAULT_COLOR  [UIColor colorWithCGColor:[UIColor redColor].CGColor]

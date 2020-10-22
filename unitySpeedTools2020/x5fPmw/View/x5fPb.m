@@ -1,11 +1,3 @@
-//
-//  XXButton.m
-//  XXSecure
-//
-//  Created by kenxian on 13-3-27.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import "x5fPb.h"
 @interface x5fPb ()
 @property(nonatomic,retain) UIColor *normalBackgroundColor;

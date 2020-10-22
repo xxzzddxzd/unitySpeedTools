@@ -1,11 +1,3 @@
-//
-//  XXAlertViewManager.h
-//  XXSecure
-//
-//  Created by Kloudz Liang on 13-5-31.
-//  Copyright (c) 2013年 XX. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 

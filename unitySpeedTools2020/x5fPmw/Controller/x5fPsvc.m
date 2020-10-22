@@ -1,11 +1,4 @@
-//
-//  XXModController.m
-//  MyTest
-//
-//  Created by 陈列奋 on 7/9/14.
-//  Copyright (c) 2014 test. All rights reserved.
-//
-
+#import "p_inc.h"
 #import "x5fPsvc.h"
 #import "x5fPavc.h"
 #import "x5fPmgd.h"
@@ -309,6 +302,7 @@ UITextFieldDelegate
             }
             x5fPmco *object = (x5fPmco *)[[self.dataSource objectAtIndex:_currentSelectIndexPath.section] objectAtIndex:_currentSelectIndexPath.row];
             object.inputValue = [value integerValue];
+            XLog(@"x5fPav %@:%ld",object,object.inputValue)
             [self.delegate detailsValue:object settingAtIndexPath:_currentSelectIndexPath];
             
             [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationNone];
