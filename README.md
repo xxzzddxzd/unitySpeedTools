@@ -14,6 +14,7 @@ English version is in wiki page
 1、在插件启动时，在屏幕上加载一个按钮。
 
 2、点击按钮，会根据特征值开始查找Unity的System函数
+2.1、20211102更新，根据函数名il2cpp_resolve_icall查找il2cpp_resolve_icall_0，即System函数的原身。
 
 3、使用System函数查找UnityEngine.Time::set_timeScale(System.Single)的地址，进行劫持
 
