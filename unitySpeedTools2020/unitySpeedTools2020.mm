@@ -1,4 +1,4 @@
-#line 1 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 1 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 #import "p_inc.h"
 #import <objc/objc-class.h>
 
@@ -140,30 +140,6 @@ static enum ENGINE_STATE execSearch(){
 }
 
 
-long doLoadFramework(){
-
-    id a =[NSBundle mainBundle];
-    id path = [a bundlePath];
-    id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
-    id c =[NSBundle bundleWithPath:bp];
-    [c load];
-    long alsr=0;
-    
-    for (int i=0; i<_dyld_image_count(); i++) {
-        
-        if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
-            XLog(@"%d,%s",i,_dyld_get_image_name(i));
-            alsr= _dyld_get_image_vmaddr_slide(i);
-        }
-    }
-    if (alsr==0) {
-        XLog(@"not framework mode")
-        alsr=_dyld_get_image_vmaddr_slide(0);
-    }
-    
-    XLog(@"alsr  %lx",alsr);
-    return alsr;
-}
 
  void memPrint64(long start, long len, int type){
      XLog(@"memPrint64 start:0x%lx",start)
@@ -295,7 +271,7 @@ extern long ne_sys_speed_control(float a1);
 @class UnityView; @class UnityAppController; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 273 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 249 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -361,5 +337,5 @@ static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLau
 }
 
 static __attribute__((constructor)) void _logosLocalInit() {
-{Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);} }
-#line 337 "/Users/xuzhengda/Documents/unitySpeedTools2020/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+{Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); { MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);}Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); { MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);}} }
+#line 313 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"

@@ -138,31 +138,7 @@ static enum ENGINE_STATE execSearch(){
     return rev;
 }
 
-/* 应对Framework形式Unity*/
-long doLoadFramework(){
-//    XLog(@"###############JBDETECT##################");
-    id a =[NSBundle mainBundle];
-    id path = [a bundlePath];
-    id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
-    id c =[NSBundle bundleWithPath:bp];
-    [c load];
-    long alsr=0;
-    
-    for (int i=0; i<_dyld_image_count(); i++) {
-        
-        if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
-            XLog(@"%d,%s",i,_dyld_get_image_name(i));
-            alsr= _dyld_get_image_vmaddr_slide(i);
-        }
-    }
-    if (alsr==0) {
-        XLog(@"not framework mode")
-        alsr=_dyld_get_image_vmaddr_slide(0);
-    }
-    
-    XLog(@"alsr  %lx",alsr);
-    return alsr;
-}
+
 
  void memPrint64(long start, long len, int type){
      XLog(@"memPrint64 start:0x%lx",start)

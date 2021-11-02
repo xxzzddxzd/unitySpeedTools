@@ -5,10 +5,36 @@
 #import <mach-o/dyld.h>
 #include <mach-o/getsect.h>
 #import "getU3dsystemfunc.h"
-extern long doLoadFramework();
+#import <substrate.h>
+static long doLoadFramework();
 static int biglittlecover(int x);
 static bool cmpIndex(long nowaddr,int index,int * ary);
 long searchintarget(long ad1,long ad2);
+
+/* 应对Framework形式Unity*/
+long doLoadFramework(){
+//    XLog(@"###############JBDETECT##################");
+    id a =[NSBundle mainBundle];
+    id path = [a bundlePath];
+    id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
+    id c =[NSBundle bundleWithPath:bp];
+    [c load];
+    long alsr=0;
+    for (int i=0; i<_dyld_image_count(); i++) {
+        if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
+            XLog(@"%d,%s",i,_dyld_get_image_name(i));
+            alsr= _dyld_get_image_vmaddr_slide(i);
+        }
+    }
+    if (alsr==0) {
+        XLog(@"not framework mode")
+        alsr=_dyld_get_image_vmaddr_slide(0);
+    }
+    
+    XLog(@"alsr  %lx",alsr);
+    return alsr;
+}
+
 //F657 BDA9 F44F 01A9 FD7B 02A9 FD83 0091 FF43 01D1 F403 00AA FF7F 04A9 FF1F 00F9
 
 #define kerncall(x) ({ \
@@ -61,6 +87,15 @@ long dosearch(){
     ad1 = (long*)malloc(sizeof(long));
     ad2 = (long*)malloc(sizeof(long));
     *ad2=doLoadFramework();
+    /* 判断是否含有il2cpp_resolve_icall_0 函数*/
+    void *il2cpp_resolve_icall_0 = MSFindSymbol(0,"_il2cpp_resolve_icall");
+    if(il2cpp_resolve_icall_0){
+        long bsr=(long)(*(int*)il2cpp_resolve_icall_0 & 0xffff )*4;
+        long addrforil2cppresolveicall=bsr+(long)il2cpp_resolve_icall_0;
+        XLog(@"il2cpp_resolve_icall_0 %lx,%x,%lx",addrforil2cppresolveicall,bsr,(long)il2cpp_resolve_icall_0);
+        return addrforil2cppresolveicall;
+    }
+//    if (
     long rev=0;
     while (getMap((void*)(*ad2),ad1,ad2) != 0) {
         rev=searchintarget(*ad1,*ad2);
