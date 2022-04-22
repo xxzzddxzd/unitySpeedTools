@@ -212,8 +212,11 @@ static enum ENGINE_STATE setU3DHook(){
         u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
         gb_state=SP_INIT_WAIT;
         XLog(@"setU3DHook set gb_state %d",gb_state);
+        XLog(@"here0")
         long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        XLog(@"here1")
         unhooku3dsystemfuncAddr64();
+        XLog(@"here2")
         XLog(@"found set_timeScale:0x%lx",revaddr);
         if(revaddr){
             memPrint64(revaddr,0x20,1);
@@ -278,11 +281,12 @@ void startSearchAndInject(){
         });
 }
 }
-
+long doLoadFramework();
 void constructor() __attribute__((constructor));
 void constructor(void)
 {
     XLog(@"Loading UnitySpeedTools for unity engine, delay 30s")
+    doLoadFramework();
 //dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
 //    dispatch_async(queue, ^{
 //        // 追加任务 1
@@ -304,6 +308,7 @@ void constructor(void)
 //
 -(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options
 {
+    XLog(@"-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options")
     startSearchAndInject();
     [x5fPmc defaultCenter];
     

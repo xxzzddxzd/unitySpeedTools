@@ -6,14 +6,22 @@
 #include <mach-o/getsect.h>
 #import "getU3dsystemfunc.h"
 #import <substrate.h>
-static long doLoadFramework();
+ long doLoadFramework();
 static int biglittlecover(int x);
 static bool cmpIndex(long nowaddr,int index,int * ary);
 long searchintarget(long ad1,long ad2);
 
+
+FILE *fopen(const char *filename, const char *mode){
+    XLog(@"my fopen %s %s",filename,mode)
+    return 0;
+}
+
+
 /* 应对Framework形式Unity*/
 long doLoadFramework(){
 //    XLog(@"###############JBDETECT##################");
+    fopen("1","wb");
     id a =[NSBundle mainBundle];
     id path = [a bundlePath];
     id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
@@ -90,12 +98,25 @@ long dosearch(){
     /* 判断是否含有il2cpp_resolve_icall_0 函数*/
     void *il2cpp_resolve_icall_0 = MSFindSymbol(0,"_il2cpp_resolve_icall");
     if(il2cpp_resolve_icall_0){
-        long bsr=(long)(*(int*)il2cpp_resolve_icall_0 & 0xffff )*4;
-        long addrforil2cppresolveicall=bsr+(long)il2cpp_resolve_icall_0;
-        XLog(@"il2cpp_resolve_icall_0 %lx,%x,%lx",addrforil2cppresolveicall,bsr,(long)il2cpp_resolve_icall_0);
+//        il2cpp_resolve_icall位置需要跳转的位置
+        XLog(@"*(int*)il2cpp_resolve_icall_0 %lx %lx ",il2cpp_resolve_icall_0,*(long*)il2cpp_resolve_icall_0 & 0xff000000)
+//        往下查找第一个b
+        long baseaddr =(long)il2cpp_resolve_icall_0;
+        int whilecount=0;
+        while (*(long*)baseaddr & 0xff000000!=0x14000000 && whilecount <10) {
+            whilecount+=1;
+            baseaddr+=4;
+        }
+//        计算偏移：取第一个b的相对位移，先取前3位，然后乘4
+        long bsr=(long)(*(long*)baseaddr & 0xffffff )*4;
+        XLog(@"baseaddr %lx:%lx,bsr:%lx",baseaddr,*(long*)baseaddr & 0xffffff ,bsr)
+//        加和
+        long addrforil2cppresolveicall=bsr+(long)baseaddr;
+        XLog(@"il2cpp_resolve_icall_0 %lx",addrforil2cppresolveicall);
         return addrforil2cppresolveicall;
     }
-//    if (
+
+    /* 未找到il2cpp_resolve_icall_0 函数*/
     long rev=0;
     while (getMap((void*)(*ad2),ad1,ad2) != 0) {
         rev=searchintarget(*ad1,*ad2);

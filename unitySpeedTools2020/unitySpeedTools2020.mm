@@ -213,8 +213,11 @@ static enum ENGINE_STATE setU3DHook(){
         u3dsystemfuncAddr64_addr[4]=*(long*)(u3dsystemfuncAddr64+8);
         gb_state=SP_INIT_WAIT;
         XLog(@"setU3DHook set gb_state %d",gb_state);
+        XLog(@"here0")
         long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        XLog(@"here1")
         unhooku3dsystemfuncAddr64();
+        XLog(@"here2")
         XLog(@"found set_timeScale:0x%lx",revaddr);
         if(revaddr){
             memPrint64(revaddr,0x20,1);
@@ -271,7 +274,7 @@ extern long ne_sys_speed_control(float a1);
 @class UnityView; @class UnityAppController; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 249 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 252 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
@@ -304,11 +307,12 @@ void startSearchAndInject(){
         });
 }
 }
-
+long doLoadFramework();
 void constructor() __attribute__((constructor));
 void constructor(void)
 {
     XLog(@"Loading UnitySpeedTools for unity engine, delay 30s")
+    doLoadFramework();
 
 
 
@@ -330,6 +334,7 @@ void constructor(void)
 
 
 static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id application, id options) {
+    XLog(@"-(BOOL)application:(id)application didFinishLaunchingWithOptions:(id)options")
     startSearchAndInject();
     [x5fPmc defaultCenter];
     
@@ -338,4 +343,4 @@ static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLau
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); { MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);}Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); { MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);}} }
-#line 313 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 318 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
