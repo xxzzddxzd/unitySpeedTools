@@ -76,12 +76,13 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
             cspeed64();
             break;
         case SW_COCO2D:
+            cspeed64_cocos2dx();
             break;
         default:
             break;
     }
     
-
+    
 }
 
 + (void)ss2:(float)spValue{
@@ -98,9 +99,9 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
         spValue/=len;
         spValue=1-spValue;
     }
-
-
-//    XLog(@"setVf1:%f isF1 %d",spValue,isF1);
+    
+    
+    //    XLog(@"setVf1:%f isF1 %d",spValue,isF1);
     vF1 = spValue;
     
     
@@ -109,6 +110,7 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
             cspeed64();
             break;
         case SW_COCO2D:
+            cspeed64_cocos2dx();
             break;
         default:
             break;
@@ -140,8 +142,8 @@ static enum ENGINE_STATE execSearch(){
 
 
 
- void memPrint64(long start, long len, int type){
-     XLog(@"memPrint64 start:0x%lx",start)
+void memPrint64(long start, long len, int type){
+    XLog(@"memPrint64 start:0x%lx",start)
     long now = start;
     long end = start+len;
     while (now<=end) {
@@ -175,6 +177,9 @@ void unhooku3dsystemfuncAddr64(){
 
 extern "C" {
 void aSimpleUnhook(bool isHook){
+    if(speedType==SW_COCO2D){
+        return;
+    }
     XLog(@"set to hook=%d? 1=hook,0=unhook",isHook)
     long thisAddr=set_timeScale_addr[0];
     if (vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY)== KERN_SUCCESS)
@@ -198,7 +203,7 @@ void aSimpleUnhook(bool isHook){
 }
 }
 static enum ENGINE_STATE setU3DHook(){
-//    enum ENGINE_STATE rev = SP_INIT_NIL;
+    //    enum ENGINE_STATE rev = SP_INIT_NIL;
     gb_state=SP_INIT_NIL;
     long u3dsystemfuncAddr64=0;
     u3dsystemfuncAddr64=dosearch();
@@ -251,12 +256,12 @@ extern long ne_sys_speed_control(float a1);
 /*******************Hook Functions***********************/
 %hook UnityView
 - (void)touchesBegan:(id)touches withEvent:(id)event{
-    XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
-//    if(gb_state==2 && sys_speed_control){
-//        XLog(@"show x5 icon")
-//        [x5fPmc showIcon];
-//    }
-    XLog(@"show x5 icon")
+    //    XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
+    //    if(gb_state==2 && sys_speed_control){
+    //        XLog(@"show x5 icon")
+    //        [x5fPmc showIcon];
+    //    }
+    //    XLog(@"show x5 icon")
     [x5fPmc showIcon];
     %orig;
 }
@@ -268,17 +273,17 @@ void startSearchAndInject(){
         return;
     }
     dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
-        dispatch_async(queue, ^{
-            gb_state=SP_INIT_WAIT;
-            XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
-            XLog(@"Loading UnitySpeedTools for unity engine")
-                if([preread(@"sw_f1") boolValue]){
-                  speedType = SW_UNITY;
-                  XLog(@"#########2");
-                  execSearch();
-                  XLog(@"--- init rev %d ---", gb_state);
-                }
-        });
+    dispatch_async(queue, ^{
+        gb_state=SP_INIT_WAIT;
+        XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
+        XLog(@"Loading UnitySpeedTools for unity engine")
+        if([preread(@"sw_f1") boolValue]){
+            speedType = SW_UNITY;
+            XLog(@"#########2");
+            execSearch();
+            XLog(@"--- init rev %d ---", gb_state);
+        }
+    });
 }
 }
 long doLoadFramework();
@@ -287,21 +292,23 @@ void constructor(void)
 {
     XLog(@"Loading UnitySpeedTools for unity engine, delay 30s")
     doLoadFramework();
-//dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
-//    dispatch_async(queue, ^{
-//        // 追加任务 1
-//        [NSThread sleepForTimeInterval:40];              // 模拟耗时操作
-//        XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
-//        XLog(@"Loading UnitySpeedTools for unity engine")
-//            if([preread(@"sw_f1") boolValue]){
-//              speedType = SW_UNITY;
-//              XLog(@"#########2");
-//              execSearch();
-//              XLog(@"--- init rev %d ---", gb_state);
-//            }
-//    });
+    
+    //dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
+    //    dispatch_async(queue, ^{
+    //        // 追加任务 1
+    //        [NSThread sleepForTimeInterval:40];              // 模拟耗时操作
+    //        XLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
+    //        XLog(@"Loading UnitySpeedTools for unity engine")
+    //            if([preread(@"sw_f1") boolValue]){
+    //              speedType = SW_UNITY;
+    //              XLog(@"#########2");
+    //              execSearch();
+    //              XLog(@"--- init rev %d ---", gb_state);
+    //            }
+    //    });
     
 }
+
 
 //#import "/usr/include/Availability.h"
 %hook UnityAppController
@@ -315,3 +322,126 @@ void constructor(void)
     return %orig;
 }
 %end
+#import <UIKit/UIKit.h>
+NSString * getFilePath() {
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [documentPaths objectAtIndex:0];
+    return [documentsDirectory stringByAppendingPathComponent:@"bundleIDs.plist"];
+}
+NSString * getBundleID() {
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
+void saveBundleIDConfirmation(id confirmation) {
+    NSString *bundleID = getBundleID();
+    NSString *filePath = getFilePath();
+    
+    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSMutableDictionary *savedData = [NSMutableDictionary dictionaryWithDictionary:data];
+    
+    if (!savedData) {
+        savedData = [NSMutableDictionary dictionary];
+    }
+    
+    [savedData setObject:confirmation forKey:bundleID];
+    [savedData writeToFile:filePath atomically:YES];
+}
+
+void showChoiced(){
+    // 弹出确认框
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"确认"
+                                                                                 message:@"是否确认该 Bundle ID？"
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        //    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"确认"
+        //                                                                             message:@"是否确认该 Bundle ID？"
+        //                                                                      preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"是"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"YES");
+        }];
+        UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"否"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"NO");
+        }];
+        
+        UIAlertAction *disableAction = [UIAlertAction actionWithTitle:@"禁用"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"AB");
+        }];
+        
+        [alertController addAction:yesAction];
+        [alertController addAction:noAction];
+        [alertController addAction:disableAction];
+        
+        [rootViewController presentViewController:alertController animated:YES completion:nil];
+    });
+}
+extern  int (*orig_gettimeofday)(struct timeval * __restrict, void * __restrict);
+extern  int mygettimeofday(struct timeval*tv,struct timezone *tz );
+
+
+//#include <sys/time.h>
+//%hook AppController
+//- (BOOL)application:(id)application didFinishLaunchingWithOptions:(id)launchOptions {
+//    NSString *filePath = getFilePath(); // 获取文件路径
+//
+//    // 检查文件是否存在
+//    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+//        NSDictionary *savedData = [NSDictionary dictionaryWithContentsOfFile:filePath];
+//        NSString *bundleID = getBundleID();
+//
+//        // 检查文件中是否已经记录了该 Bundle ID
+//        id savedopt = [savedData objectForKey:bundleID];
+//        if (savedopt) {
+//            // 已记录，不再弹框
+//            XLog(@"Bundle ID: %@ 已经记录, key is %@", bundleID, savedopt);
+//            if ([savedopt isEqualToString:@"AB"]) {
+//                return %orig; // 禁用，直接返回
+//            }
+//            else if ([savedopt isEqualToString:@"YES"]) {
+//                // 执行加速
+//                // 获取应用程序的委托对象
+////                XLog(@"_gettimeofday %lx",MSFindSymbol(NULL,"_gettimeofday"))
+////                MSHookFunction((void *)MSFindSymbol(NULL,"_gettimeofday"), (void *)mygettimeofday, (void **)&orig_gettimeofday);
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    // 获取应用程序的主窗口
+//                    UIWindow *mainWindow = [UIApplication sharedApplication].keyWindow;
+//
+//                    // 创建并显示自动消失的提示框
+//                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"提示"
+//                                                                                             message:@"已开启"
+//                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+//
+//                    [mainWindow.rootViewController presentViewController:alertController animated:YES completion:nil];
+//
+//                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                        [alertController dismissViewControllerAnimated:YES completion:nil];
+//                    });
+//
+//                });
+////                XLog(@"_gettimeofday %lx",MSFindSymbol("/usr/lib/libc++.1.dylib","_gettimeofday"))
+//                MSHookFunction((void *)gettimeofday, (void *)mygettimeofday, (void **)&orig_gettimeofday);;
+//                speedType=SW_COCO2D;
+//                gb_state=SP_INIT_DONE;
+//                [x5fPmc defaultCenter];
+//                [x5fPmc showIcon];
+//                return %orig;
+//            } else{
+//                showChoiced();
+//            }
+//            return %orig;
+//        }
+//    }else{
+//        showChoiced();
+//    }
+//
+//
+//    return %orig;
+//}
+//
+//%end

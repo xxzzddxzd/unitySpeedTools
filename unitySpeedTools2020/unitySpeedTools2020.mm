@@ -1,4 +1,4 @@
-#line 1 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 1 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 #import "p_inc.h"
 #import <objc/objc-class.h>
 
@@ -77,12 +77,13 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
             cspeed64();
             break;
         case SW_COCO2D:
+            cspeed64_cocos2dx();
             break;
         default:
             break;
     }
     
-
+    
 }
 
 + (void)ss2:(float)spValue{
@@ -99,9 +100,9 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
         spValue/=len;
         spValue=1-spValue;
     }
-
-
-
+    
+    
+    
     vF1 = spValue;
     
     
@@ -110,6 +111,7 @@ NSMutableArray * cptm, * cpts, *cptm64, *cpts64;
             cspeed64();
             break;
         case SW_COCO2D:
+            cspeed64_cocos2dx();
             break;
         default:
             break;
@@ -141,8 +143,8 @@ static enum ENGINE_STATE execSearch(){
 
 
 
- void memPrint64(long start, long len, int type){
-     XLog(@"memPrint64 start:0x%lx",start)
+void memPrint64(long start, long len, int type){
+    XLog(@"memPrint64 start:0x%lx",start)
     long now = start;
     long end = start+len;
     while (now<=end) {
@@ -176,6 +178,9 @@ void unhooku3dsystemfuncAddr64(){
 
 extern "C" {
 void aSimpleUnhook(bool isHook){
+    if(speedType==SW_COCO2D){
+        return;
+    }
     XLog(@"set to hook=%d? 1=hook,0=unhook",isHook)
     long thisAddr=set_timeScale_addr[0];
     if (vm_protect(mach_task_self(), (vm_address_t) (thisAddr ), 0x10, 0, VM_PROT_READ | VM_PROT_WRITE | VM_PROT_COPY)== KERN_SUCCESS)
@@ -199,7 +204,7 @@ void aSimpleUnhook(bool isHook){
 }
 }
 static enum ENGINE_STATE setU3DHook(){
-
+    
     gb_state=SP_INIT_NIL;
     long u3dsystemfuncAddr64=0;
     u3dsystemfuncAddr64=dosearch();
@@ -271,18 +276,18 @@ extern long ne_sys_speed_control(float a1);
 #define _LOGOS_RETURN_RETAINED
 #endif
 
-@class UnityView; @class UnityAppController; 
+@class UnityAppController; @class UnityView; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 252 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 257 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
-    XLog(@"touchesBegan %d %lx",gb_state,sys_speed_control);
-
-
-
-
-    XLog(@"show x5 icon")
+    
+    
+    
+    
+    
+    
     [x5fPmc showIcon];
     _logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$(self, _cmd, touches, event);
 }
@@ -294,17 +299,17 @@ void startSearchAndInject(){
         return;
     }
     dispatch_queue_t queue = dispatch_queue_create("1212", DISPATCH_QUEUE_CONCURRENT);
-        dispatch_async(queue, ^{
-            gb_state=SP_INIT_WAIT;
-            XLog(@"1---%@",[NSThread currentThread]);      
-            XLog(@"Loading UnitySpeedTools for unity engine")
-                if([preread(@"sw_f1") boolValue]){
-                  speedType = SW_UNITY;
-                  XLog(@"#########2");
-                  execSearch();
-                  XLog(@"--- init rev %d ---", gb_state);
-                }
-        });
+    dispatch_async(queue, ^{
+        gb_state=SP_INIT_WAIT;
+        XLog(@"1---%@",[NSThread currentThread]);      
+        XLog(@"Loading UnitySpeedTools for unity engine")
+        if([preread(@"sw_f1") boolValue]){
+            speedType = SW_UNITY;
+            XLog(@"#########2");
+            execSearch();
+            XLog(@"--- init rev %d ---", gb_state);
+        }
+    });
 }
 }
 long doLoadFramework();
@@ -313,21 +318,23 @@ void constructor(void)
 {
     XLog(@"Loading UnitySpeedTools for unity engine, delay 30s")
     doLoadFramework();
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
+
 
 
 
@@ -341,6 +348,129 @@ static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLau
     return _logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(self, _cmd, application, options);
 }
 
+#import <UIKit/UIKit.h>
+NSString * getFilePath() {
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [documentPaths objectAtIndex:0];
+    return [documentsDirectory stringByAppendingPathComponent:@"bundleIDs.plist"];
+}
+NSString * getBundleID() {
+    return [[NSBundle mainBundle] bundleIdentifier];
+}
+void saveBundleIDConfirmation(id confirmation) {
+    NSString *bundleID = getBundleID();
+    NSString *filePath = getFilePath();
+    
+    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSMutableDictionary *savedData = [NSMutableDictionary dictionaryWithDictionary:data];
+    
+    if (!savedData) {
+        savedData = [NSMutableDictionary dictionary];
+    }
+    
+    [savedData setObject:confirmation forKey:bundleID];
+    [savedData writeToFile:filePath atomically:YES];
+}
+
+void showChoiced(){
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIViewController *rootViewController = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"确认"
+                                                                                 message:@"是否确认该 Bundle ID？"
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+        
+        
+        
+        
+        UIAlertAction *yesAction = [UIAlertAction actionWithTitle:@"是"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"YES");
+        }];
+        UIAlertAction *noAction = [UIAlertAction actionWithTitle:@"否"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"NO");
+        }];
+        
+        UIAlertAction *disableAction = [UIAlertAction actionWithTitle:@"禁用"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction *action) {
+            saveBundleIDConfirmation(@"AB");
+        }];
+        
+        [alertController addAction:yesAction];
+        [alertController addAction:noAction];
+        [alertController addAction:disableAction];
+        
+        [rootViewController presentViewController:alertController animated:YES completion:nil];
+    });
+}
+extern  int (*orig_gettimeofday)(struct timeval * __restrict, void * __restrict);
+extern  int mygettimeofday(struct timeval*tv,struct timezone *tz );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); { MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);}Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); { MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);}} }
-#line 318 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 448 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"

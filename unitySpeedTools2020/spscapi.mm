@@ -48,7 +48,7 @@ float minSp = 0;
 
 
 /*
- 变速执行函数
+ 变速执行函数 - unity3d
  */
 void cspeed64(){
 //    if(gb_state == SP_INIT_DONE){
@@ -88,4 +88,28 @@ long ne_sys_get_targetFrameRate(){
     long rev=sys_get_targetFrameRate();
     XLog(@"get_targetFrameRate %ld",rev)
     return rev;
+}
+
+/*
+ 变速执行函数 - unity3d
+ */
+int SPEEDLEVEL=1;
+void cspeed64_cocos2dx(){
+    int k = vF1;
+    if (!isF1) {
+        k=1;
+    }
+    XLog(@"set cocos2dx speed to %d",k)
+    SPEEDLEVEL=2;
+}
+
+
+ int (*orig_gettimeofday)(struct timeval * __restrict, void * __restrict);
+ int mygettimeofday(struct timeval*tv,struct timezone *tz ) {
+    int ret = orig_gettimeofday(tv,tz);
+    if (ret == 0) {
+        tv->tv_usec *= SPEEDLEVEL;
+        tv->tv_sec *= SPEEDLEVEL;
+    }
+    return ret;
 }

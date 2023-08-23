@@ -9,6 +9,7 @@ extern long (*x5TimeScalex64)(long,float);
 extern long (*x5TimeManagerx64)(long);
 extern long (*x5TimeManagerNew)();
 void cspeed64();
+void cspeed64_cocos2dx();
 long ne_x5TimeScalex64(long x0,float x1);
 long ne_x5TimeManagerx64(long r0);
 long ne_x5TimeManagerNew();
