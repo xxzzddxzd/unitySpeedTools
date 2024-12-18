@@ -1,4 +1,4 @@
-#line 1 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 1 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 #import "p_inc.h"
 #import <objc/objc-class.h>
 
@@ -203,11 +203,112 @@ void aSimpleUnhook(bool isHook){
     }
 }
 }
-static enum ENGINE_STATE setU3DHook(){
+
+NSString * addrFilenameByFunctionName(NSString * func){
     
-    gb_state=SP_INIT_NIL;
-    long u3dsystemfuncAddr64=0;
-    u3dsystemfuncAddr64=dosearch();
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (!version) {
+        version = @"unknown";
+    }
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    if (!documentsDirectory) {
+        XLog(@"Failed to get Documents directory.");
+        return nil;
+    }
+    
+    
+    NSString *fileName = [NSString stringWithFormat:@"func_addr_%@_%@.txt", version, func];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    return filePath;
+}
+
+void updateAddrToFileByFunctionName(long revaddr, NSString* func){
+    long ASLR ;
+    ASLR = doLoadFramework();
+    long adjusted_revaddr = revaddr - ASLR;
+    NSString *filePath = addrFilenameByFunctionName(func);
+    
+    
+    NSString *addressString = [NSString stringWithFormat:@"%lx", adjusted_revaddr];
+    
+    
+    NSError *error = nil;
+    BOOL success = [addressString writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (success) {
+        XLog(@"Successfully wrote %@ addr to %@", func, filePath);
+    } else {
+        XLog(@"Failed to write : %@", [error localizedDescription]);
+    }
+}
+BOOL getStoredAddressByName(long *storedAddress, NSString * func){
+    if (!storedAddress) {
+        return NO;
+    }
+    long ASLR ;
+    ASLR = doLoadFramework();
+    
+    NSString *filePath = addrFilenameByFunctionName(func);
+    if (!filePath) {
+        XLog(@"File path is nil. Cannot read address.");
+        return NO;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:filePath]) {
+        NSError *readError = nil;
+        NSString *addressString = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:&readError];
+        if (readError) {
+            XLog(@"Failed to read address file: %@", [readError localizedDescription]);
+            return NO;
+        }
+        
+        if (addressString.length > 0) {
+            
+            unsigned long addr = strtoul([addressString UTF8String], NULL, 16);
+            if (addr != 0) {
+                *storedAddress = addr;
+                XLog(@"Using stored %@: 0x%lx",func, *storedAddress);
+                *storedAddress = *storedAddress+ASLR;
+                XLog(@"apply aslr: 0x%lx", *storedAddress);
+                
+                
+                NSError *deleteError = nil;
+                BOOL deleted = [fileManager removeItemAtPath:filePath error:&deleteError];
+                if (deleted) {
+                    XLog(@"Successfully deleted address file: %@", filePath);
+                } else {
+                    XLog(@"Failed to delete address file: %@", [deleteError localizedDescription]);
+                    
+                }
+                return YES;
+            } else {
+                XLog(@"Stored address is invalid.");
+                return NO;
+            }
+        } else {
+            XLog(@"Address file is empty.");
+            return NO;
+        }
+    } else {
+        XLog(@"Address file does not exist.");
+        return NO;
+    }
+}
+
+static enum ENGINE_STATE setU3DHook(){
+    gb_state = SP_INIT_NIL;
+    long u3dsystemfuncAddr64 = 0;
+    long u3dsettimescaleAddr64 = 0;
+    
+    getStoredAddressByName(&u3dsystemfuncAddr64,@"u3dsystemfuncAddr64");
+    getStoredAddressByName(&u3dsettimescaleAddr64,@"u3dsettimescaleAddr64");
+    
+    if (!u3dsystemfuncAddr64) {
+        u3dsystemfuncAddr64 = dosearch();
+    }
+    
     XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
         u3dsystemfuncAddr64_addr[0]=(u3dsystemfuncAddr64);
@@ -219,23 +320,24 @@ static enum ENGINE_STATE setU3DHook(){
         gb_state=SP_INIT_WAIT;
         XLog(@"setU3DHook set gb_state %d",gb_state);
         XLog(@"here0")
-        long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-        XLog(@"here1")
+        if (!u3dsettimescaleAddr64) {
+            u3dsettimescaleAddr64 = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        }
         unhooku3dsystemfuncAddr64();
-        XLog(@"here2")
-        XLog(@"found set_timeScale:0x%lx",revaddr);
-        if(revaddr){
-            memPrint64(revaddr,0x20,1);
-            set_timeScale_addr[0]=(revaddr);
-            set_timeScale_addr[1]=*(long*)(revaddr);
-            set_timeScale_addr[2]=*(long*)(revaddr+8);
-            MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-            set_timeScale_addr[3]=*(long*)(revaddr);
-            set_timeScale_addr[4]=*(long*)(revaddr+8);
-            memPrint64(revaddr,0x20,1);
+        if(u3dsettimescaleAddr64){
+            memPrint64(u3dsettimescaleAddr64,0x20,1);
+            set_timeScale_addr[0]=(u3dsettimescaleAddr64);
+            set_timeScale_addr[1]=*(long*)(u3dsettimescaleAddr64);
+            set_timeScale_addr[2]=*(long*)(u3dsettimescaleAddr64+8);
+            MSHookFunction((void *)(u3dsettimescaleAddr64), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+            set_timeScale_addr[3]=*(long*)(u3dsettimescaleAddr64);
+            set_timeScale_addr[4]=*(long*)(u3dsettimescaleAddr64+8);
+            memPrint64(u3dsettimescaleAddr64,0x20,1);
             gb_state=SP_INIT_DONE;
             XLog(@"setU3DHook set gb_state %d",gb_state);
             aSimpleUnhook(1);
+            updateAddrToFileByFunctionName(u3dsettimescaleAddr64,@"u3dsettimescaleAddr64");
+            updateAddrToFileByFunctionName(u3dsystemfuncAddr64,@"u3dsystemfuncAddr64");
         }
     }
     return gb_state;
@@ -276,10 +378,12 @@ extern long ne_sys_speed_control(float a1);
 #define _LOGOS_RETURN_RETAINED
 #endif
 
+__asm__(".linker_option \"-framework\", \"CydiaSubstrate\"");
+
 @class UnityView; @class UnityAppController; 
 static void (*_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$)(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST, SEL, id, id); static BOOL (*_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$)(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); static BOOL _logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$(_LOGOS_SELF_TYPE_NORMAL UnityAppController* _LOGOS_SELF_CONST, SEL, id, id); 
 
-#line 257 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 359 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
 
 static void _logos_method$_ungrouped$UnityView$touchesBegan$withEvent$(_LOGOS_SELF_TYPE_NORMAL UnityView* _LOGOS_SELF_CONST __unused self, SEL __unused _cmd, id touches, id event){
     
@@ -473,4 +577,4 @@ extern  int mygettimeofday(struct timeval*tv,struct timezone *tz );
 
 static __attribute__((constructor)) void _logosLocalInit() {
 {Class _logos_class$_ungrouped$UnityView = objc_getClass("UnityView"); { MSHookMessageEx(_logos_class$_ungrouped$UnityView, @selector(touchesBegan:withEvent:), (IMP)&_logos_method$_ungrouped$UnityView$touchesBegan$withEvent$, (IMP*)&_logos_orig$_ungrouped$UnityView$touchesBegan$withEvent$);}Class _logos_class$_ungrouped$UnityAppController = objc_getClass("UnityAppController"); { MSHookMessageEx(_logos_class$_ungrouped$UnityAppController, @selector(application:didFinishLaunchingWithOptions:), (IMP)&_logos_method$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$, (IMP*)&_logos_orig$_ungrouped$UnityAppController$application$didFinishLaunchingWithOptions$);}} }
-#line 448 "/Users/xuzhengda/Documents/Github/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"
+#line 550 "/Users/xuzhengda/Documents/GitHub/unitySpeedTools/unitySpeedTools2020/unitySpeedTools2020.xm"

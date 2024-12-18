@@ -108,7 +108,6 @@ x5fPsd
 
 + (void)showIcon
 {
-    NSLog(@"set show");
     static x5fPmc * mc = [self defaultCenter];
     mc.centerWindow.hidden = NO;
     
@@ -116,7 +115,6 @@ x5fPsd
 
 + (void)hiddenIcon
 {
-    NSLog(@"set hidden");
     static x5fPmc * mc = [self defaultCenter];
     mc.centerWindow.hidden = YES;
 }

@@ -202,11 +202,112 @@ void aSimpleUnhook(bool isHook){
     }
 }
 }
+
+NSString * addrFilenameByFunctionName(NSString * func){
+    // 1. 获取应用的版本号
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    if (!version) {
+        version = @"unknown";
+    }
+    // 3. 获取Documents目录路径
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    if (!documentsDirectory) {
+        XLog(@"Failed to get Documents directory.");
+        return nil;
+    }
+    
+    // 4. 构建文件名和完整路径
+    NSString *fileName = [NSString stringWithFormat:@"func_addr_%@_%@.txt", version, func];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    return filePath;
+}
+
+void updateAddrToFileByFunctionName(long revaddr, NSString* func){
+    long ASLR ;
+    ASLR = doLoadFramework();
+    long adjusted_revaddr = revaddr - ASLR;
+    NSString *filePath = addrFilenameByFunctionName(func);
+    
+    // 5. 将调整后的地址转换为字符串
+    NSString *addressString = [NSString stringWithFormat:@"%lx", adjusted_revaddr];
+    
+    // 6. 写入文件
+    NSError *error = nil;
+    BOOL success = [addressString writeToFile:filePath atomically:YES encoding:NSUTF8StringEncoding error:&error];
+    if (success) {
+        XLog(@"Successfully wrote %@ addr to %@", func, filePath);
+    } else {
+        XLog(@"Failed to write : %@", [error localizedDescription]);
+    }
+}
+BOOL getStoredAddressByName(long *storedAddress, NSString * func){
+    if (!storedAddress) {
+        return NO;
+    }
+    long ASLR ;
+    ASLR = doLoadFramework();
+    
+    NSString *filePath = addrFilenameByFunctionName(func);
+    if (!filePath) {
+        XLog(@"File path is nil. Cannot read address.");
+        return NO;
+    }
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:filePath]) {
+        NSError *readError = nil;
+        NSString *addressString = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:&readError];
+        if (readError) {
+            XLog(@"Failed to read address file: %@", [readError localizedDescription]);
+            return NO;
+        }
+        
+        if (addressString.length > 0) {
+            // 将地址字符串转换为 long
+            unsigned long addr = strtoul([addressString UTF8String], NULL, 16);
+            if (addr != 0) {
+                *storedAddress = addr;
+                XLog(@"Using stored %@: 0x%lx",func, *storedAddress);
+                *storedAddress = *storedAddress+ASLR;
+                XLog(@"apply aslr: 0x%lx", *storedAddress);
+                
+                // 删除文件，以防存了错误的地址，导致进入闪退循环。
+                NSError *deleteError = nil;
+                BOOL deleted = [fileManager removeItemAtPath:filePath error:&deleteError];
+                if (deleted) {
+                    XLog(@"Successfully deleted address file: %@", filePath);
+                } else {
+                    XLog(@"Failed to delete address file: %@", [deleteError localizedDescription]);
+                    // 根据需要决定是否将删除失败视为错误
+                }
+                return YES;
+            } else {
+                XLog(@"Stored address is invalid.");
+                return NO;
+            }
+        } else {
+            XLog(@"Address file is empty.");
+            return NO;
+        }
+    } else {
+        XLog(@"Address file does not exist.");
+        return NO;
+    }
+}
+
 static enum ENGINE_STATE setU3DHook(){
-    //    enum ENGINE_STATE rev = SP_INIT_NIL;
-    gb_state=SP_INIT_NIL;
-    long u3dsystemfuncAddr64=0;
-    u3dsystemfuncAddr64=dosearch();
+    gb_state = SP_INIT_NIL;
+    long u3dsystemfuncAddr64 = 0;
+    long u3dsettimescaleAddr64 = 0;
+    // 尝试从文件中获取存储的地址
+    getStoredAddressByName(&u3dsystemfuncAddr64,@"u3dsystemfuncAddr64");
+    getStoredAddressByName(&u3dsettimescaleAddr64,@"u3dsettimescaleAddr64");
+    
+    if (!u3dsystemfuncAddr64) {
+        u3dsystemfuncAddr64 = dosearch();
+    }
+    
     XLog(@"u3dsystemfuncAddr64 %lx",u3dsystemfuncAddr64)
     if (u3dsystemfuncAddr64){
         u3dsystemfuncAddr64_addr[0]=(u3dsystemfuncAddr64);
@@ -218,23 +319,24 @@ static enum ENGINE_STATE setU3DHook(){
         gb_state=SP_INIT_WAIT;
         XLog(@"setU3DHook set gb_state %d",gb_state);
         XLog(@"here0")
-        long revaddr = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
-        XLog(@"here1")
+        if (!u3dsettimescaleAddr64) {
+            u3dsettimescaleAddr64 = ne_u3dsystemfunc("UnityEngine.Time::set_timeScale(System.Single)");
+        }
         unhooku3dsystemfuncAddr64();
-        XLog(@"here2")
-        XLog(@"found set_timeScale:0x%lx",revaddr);
-        if(revaddr){
-            memPrint64(revaddr,0x20,1);
-            set_timeScale_addr[0]=(revaddr);
-            set_timeScale_addr[1]=*(long*)(revaddr);
-            set_timeScale_addr[2]=*(long*)(revaddr+8);
-            MSHookFunction((void *)(revaddr), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
-            set_timeScale_addr[3]=*(long*)(revaddr);
-            set_timeScale_addr[4]=*(long*)(revaddr+8);
-            memPrint64(revaddr,0x20,1);
+        if(u3dsettimescaleAddr64){
+            memPrint64(u3dsettimescaleAddr64,0x20,1);
+            set_timeScale_addr[0]=(u3dsettimescaleAddr64);
+            set_timeScale_addr[1]=*(long*)(u3dsettimescaleAddr64);
+            set_timeScale_addr[2]=*(long*)(u3dsettimescaleAddr64+8);
+            MSHookFunction((void *)(u3dsettimescaleAddr64), (void *)ne_sys_speed_control, (void **)&sys_speed_control);
+            set_timeScale_addr[3]=*(long*)(u3dsettimescaleAddr64);
+            set_timeScale_addr[4]=*(long*)(u3dsettimescaleAddr64+8);
+            memPrint64(u3dsettimescaleAddr64,0x20,1);
             gb_state=SP_INIT_DONE;
             XLog(@"setU3DHook set gb_state %d",gb_state);
             aSimpleUnhook(1);
+            updateAddrToFileByFunctionName(u3dsettimescaleAddr64,@"u3dsettimescaleAddr64");
+            updateAddrToFileByFunctionName(u3dsystemfuncAddr64,@"u3dsystemfuncAddr64");
         }
     }
     return gb_state;

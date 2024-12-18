@@ -27,20 +27,20 @@ long doLoadFramework(){
     id bp = [path stringByAppendingString:@"/Frameworks/UnityFramework.framework"];
     id c =[NSBundle bundleWithPath:bp];
     [c load];
-    long alsr=0;
+    long ASLR=0;
     for (int i=0; i<_dyld_image_count(); i++) {
         if ([[NSString stringWithUTF8String:_dyld_get_image_name(i) ]  containsString:@"UnityFramework.framework/UnityFramework"]) {
             XLog(@"%d,%s",i,_dyld_get_image_name(i));
-            alsr= _dyld_get_image_vmaddr_slide(i);
+            ASLR= _dyld_get_image_vmaddr_slide(i);
         }
     }
-    if (alsr==0) {
+    if (ASLR==0) {
         XLog(@"not framework mode")
-        alsr=_dyld_get_image_vmaddr_slide(0);
+        ASLR=_dyld_get_image_vmaddr_slide(0);
     }
     
-    XLog(@"alsr  %lx",alsr);
-    return alsr;
+    XLog(@"ASLR  %lx",ASLR);
+    return ASLR;
 }
 
 //F657 BDA9 F44F 01A9 FD7B 02A9 FD83 0091 FF43 01D1 F403 00AA FF7F 04A9 FF1F 00F9
